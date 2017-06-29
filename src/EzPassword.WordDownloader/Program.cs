@@ -1,6 +1,7 @@
 ﻿namespace EzPassword.WordDownloader
 {
     using System.Threading.Tasks;
+    using Core.Config;
     using WikiClientLibrary;
     using WikiClientLibrary.Client;
     using WikiClientLibrary.Generators;
@@ -9,20 +10,8 @@
     {
         private static void Main(string[] args)
         {
-            MainAsync(args).Wait();
-        }
-
-        private static async Task MainAsync(string[] args)
-        {
-            var wikiClient = new WikiClient();
-            var site = await Site.CreateAsync(wikiClient, "https://pl.wiktionary.org/w/api.php");
-            var categoryMembersGenerator = new CategoryMembersGenerator(site, "Kategoria:Język polski - przymiotniki")
-            {
-                MemberTypes = CategoryMemberTypes. Page
-            };
-
-            var wikiDownloader = new WikiDownloader(categoryMembersGenerator);
-            wikiDownloader.DownloadWords("C:\\Temp\\dicts", "adjectives_{0:D2}.txt");
+            var wikiDownloader = new WikiDownloader(Languages.Polish.AdjectiveCategory);
+            wikiDownloader.DownloadWords(@"C:\Temp\dicts\pl", "adjectives_{0:D2}.txt");
         }
     }
 }
