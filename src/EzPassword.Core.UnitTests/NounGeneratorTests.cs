@@ -1,6 +1,8 @@
 ﻿namespace EzPassword.Core.UnitTests
 {
     using System;
+    using Config;
+    using Wiki;
     using Xunit;
 
     public class NounGeneratorTests
@@ -10,15 +12,15 @@
             [Fact]
             public void ThrowsException_WhenEmptyEndpointPassed()
             {
-                Action ctor = () => new NounGenerator(null);
+                Action ctor = () => new WikiWordGenerator(null, this.categoryMembersGenerator = Languages.Polish.NounCategory);
                 Assert.Throws<ArgumentNullException>(ctor);
             }
 
             [Fact]
             public async void Foo()
             {
-                var g = new NounGenerator("https://pl.wiktionary.org/w/api.php");
-                var a = await g.GetRandomNoun();
+                //var g = new WikiWordGenerator("https://pl.wiktionary.org/w/api.php");
+                //g.Subscribe()
             }
         }
 
