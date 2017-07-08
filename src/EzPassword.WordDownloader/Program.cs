@@ -19,12 +19,12 @@
         private static void Main(string[] args)
         {
             var option = new CommandLineOptions();
-            var isValid = Parser.Default.ParseArgumentsStrict(args, option);
-            var wikiConfig = ReadWikiConfig();
+            bool isValid = Parser.Default.ParseArgumentsStrict(args, option);
 
-            var language = wikiConfig[option.LanguageSymbol];
+            IDictionary<string, Language> wikiConfig = ReadWikiConfig();
+            Language language = wikiConfig[option.LanguageSymbol];
 
-            var tasks = RunTasks(language, option.OutDirectory);
+            IEnumerable<Task> tasks = RunTasks(language, option.OutDirectory);
 
             Task.WhenAll(tasks).Wait();
 
@@ -35,10 +35,10 @@
         {
             Task nounTask = Task.Run(() =>
             {
-                IObservable<string> nounGenerator = new WikiWordGenerator(language.NounCategory);
+                IObservable<string> nounGenerator = new WikiWordDownloader(language.NounCategory);
                 var nounSubscriber = new TextFileWordPersister(
-                    $@"{outDirectory}\{language.Symbol}\nouns",
-                    "nouns_{0:D2}.txt");
+                    $@"{outDirectory}\{language.Symbol}\{WordDirectoryConfig.NounDirectoryName}",
+                    WordDirectoryConfig.NounFileNameTemplate);
                 Logger.Info("Saving nouns starting with letters: ");
                 nounGenerator.Subscribe(nounSubscriber);
                 nounGenerator.Wait();
@@ -47,10 +47,10 @@
 
             Task adjectiveTask = Task.Run(() =>
             {
-                IObservable<string> adjectiveGenerator = new WikiWordGenerator(language.AdjectiveCategory);
+                IObservable<string> adjectiveGenerator = new WikiWordDownloader(language.AdjectiveCategory);
                 var adjectiveSubscriber = new TextFileWordPersister(
-                    $@"{outDirectory}\{language.Symbol}\adjectives",
-                    "adjectives_{0:D2}.txt");
+                    $@"{outDirectory}\{language.Symbol}\{WordDirectoryConfig.AdjectiveDirectoryName}",
+                    WordDirectoryConfig.AdjectiveFileNameTemplate);
                 Logger.Info("Saving adjectives starting with letters: ");
                 adjectiveGenerator.Subscribe(adjectiveSubscriber);
                 adjectiveGenerator.Wait();

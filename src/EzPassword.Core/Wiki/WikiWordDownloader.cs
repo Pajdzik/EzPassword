@@ -8,11 +8,11 @@
     using WikiClientLibrary.Client;
     using WikiClientLibrary.Generators;
 
-    public class WikiWordGenerator : IWordGenerator
+    public class WikiWordDownloader : IWordDownloader
     {
         private readonly CategoryMembersGenerator categoryMembersGenerator;
 
-        public WikiWordGenerator(CategoryMembersGenerator categoryMembersGenerator)
+        public WikiWordDownloader(CategoryMembersGenerator categoryMembersGenerator)
         {
             this.categoryMembersGenerator = categoryMembersGenerator;
         }
