@@ -60,8 +60,8 @@
 
         private static IDictionary<string, Language> ReadWikiConfig()
         {
-            const string wikiConfigFileName = "WikiConfig.json";
-            var wikiConfig = File.ReadAllText(wikiConfigFileName);
+            const string WikiConfigFileName = "WikiConfig.json";
+            var wikiConfig = File.ReadAllText(WikiConfigFileName);
             var languages = JsonConvert.DeserializeObject<List<Language>>(wikiConfig);
             return languages.ToDictionary(lang => lang.Symbol, lang => lang);
         }

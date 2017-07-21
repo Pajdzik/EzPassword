@@ -24,12 +24,6 @@
             CreateDirectory(directoryPath);
         }
 
-        private static void CreateDirectory(string directoryPath)
-        {
-            Logger.Info($"Creating directory \"{directoryPath}\"");
-            Directory.CreateDirectory(directoryPath);
-        }
-
         public void OnNext(string value)
         {
             string firstTwoLetters = value.Substring(0, Math.Min(2, value.Length));
@@ -58,6 +52,12 @@
             }
 
             Logger.Debug("Completed!");
+        }
+
+        private static void CreateDirectory(string directoryPath)
+        {
+            Logger.Info($"Creating directory \"{directoryPath}\"");
+            Directory.CreateDirectory(directoryPath);
         }
 
         private StreamWriter GetStreamWriter(int wordLength, string directoryPath, string fileNameTemplate)

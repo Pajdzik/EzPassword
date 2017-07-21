@@ -40,10 +40,10 @@
                 MemberTypes = CategoryMemberTypes.Page
             };
 
-        internal static Language Create(string symbol, string wikiApiUrl, string adjectiveCategoryUrl,
-            string nounCategoryUrl)
+        internal static Language Create(string symbol, string wikiApiUrl, string adjectiveCategoryUrl, string nounCategoryUrl)
         {
-            return new Language(symbol,
+            return new Language(
+                symbol,
                 new Uri(wikiApiUrl),
                 adjectiveCategoryUrl,
                 nounCategoryUrl);

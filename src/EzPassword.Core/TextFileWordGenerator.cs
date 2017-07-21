@@ -9,7 +9,7 @@
 
     public class TextFileWordGenerator : IRandomWordGenerator
     {
-        private static readonly Random random = new Random();
+        private static readonly Random Random = new Random();
 
         private readonly Dictionary<int, string[]> wordFiles;
 
@@ -24,19 +24,6 @@
             this.wordFiles = files.ToDictionary(f => GetWordLength(f, fileNameRegex), file.ReadAllLines);
         }
 
-        public string GetRandomWord()
-        {
-            var keys = this.wordFiles.Keys;
-            int randomIndex = random.Next(keys.Count);
-
-            return this.GetRandomWord(keys.ElementAt(randomIndex));
-        }
-
-        public string GetRandomWord(int wordLength)
-        {
-            return GetRandomWord(this.wordFiles, wordLength);
-        }
-
         public static string GetRandomWord(IDictionary<int, string[]> wordsByLength, int wordLength)
         {
             if (!wordsByLength.ContainsKey(wordLength))
@@ -45,9 +32,22 @@
             }
 
             string[] words = wordsByLength[wordLength];
-            int randomIndex = random.Next(words.Length);
+            int randomIndex = Random.Next(words.Length);
 
             return words[randomIndex];
+        }
+
+        public string GetRandomWord()
+        {
+            var keys = this.wordFiles.Keys;
+            int randomIndex = Random.Next(keys.Count);
+
+            return this.GetRandomWord(keys.ElementAt(randomIndex));
+        }
+
+        public string GetRandomWord(int wordLength)
+        {
+            return GetRandomWord(this.wordFiles, wordLength);
         }
 
         private static int GetWordLength(string fileName, string fileNameRegex)
