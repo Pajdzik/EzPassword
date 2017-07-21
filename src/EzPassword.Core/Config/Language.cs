@@ -2,13 +2,13 @@
 {
     using System;
     using System.Threading.Tasks;
-    using WikiClientLibrary;
     using WikiClientLibrary.Client;
     using WikiClientLibrary.Generators;
+    using WikiClientLibrary.Sites;
 
     public struct Language
     {
-        private readonly Site site;
+        private readonly WikiSite site;
 
         public Language(string symbol, Uri wikiApi, string adjectiveCategoryTitle, string nounCategoryTitle) : this()
         {
@@ -28,27 +28,17 @@
 
         public string NounCategoryTitle { get; }
 
-        public CategoryMembersGenerator AdjectiveCategory
-        {
-            get
+        public CategoryMembersGenerator AdjectiveCategory => 
+            new CategoryMembersGenerator(this.site, this.AdjectiveCategoryTitle)
             {
-                return new CategoryMembersGenerator(this.site, this.AdjectiveCategoryTitle)
-                {
-                    MemberTypes = CategoryMemberTypes.Page
-                };
-            }
-        }
+                MemberTypes = CategoryMemberTypes.Page
+            };
 
-        public CategoryMembersGenerator NounCategory
-        {
-            get
+        public CategoryMembersGenerator NounCategory => 
+            new CategoryMembersGenerator(this.site, this.NounCategoryTitle)
             {
-                return new CategoryMembersGenerator(this.site, this.NounCategoryTitle)
-                {
-                    MemberTypes = CategoryMemberTypes.Page
-                };
-            }
-        }
+                MemberTypes = CategoryMemberTypes.Page
+            };
 
         internal static Language Create(string symbol, string wikiApiUrl, string adjectiveCategoryUrl,
             string nounCategoryUrl)
@@ -59,14 +49,14 @@
                 nounCategoryUrl);
         }
 
-        private Site CreateSite(string wikiApiUrl)
+        private WikiSite CreateSite(string wikiApiUrl)
         {
-            Site site = null;
+            WikiSite site = null;
 
             Task.Run(async () =>
             {
                 var wikiClient = new WikiClient();
-                site = await Site.CreateAsync(wikiClient, wikiApiUrl);
+                site = await WikiSite.CreateAsync(wikiClient, wikiApiUrl);
             }).Wait();
 
             return site;
