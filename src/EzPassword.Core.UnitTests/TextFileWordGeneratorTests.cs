@@ -65,6 +65,133 @@
                     new TextFileWordGenerator(directoryProxyMock, fileProxyMock, WordDirectoryPath, FileNameRegex);
                 construct.ShouldThrow<ArgumentException>();
             }
+
+            [Fact]
+            public void ThrowsException_WhenNoFilesAreAvailable()
+            {
+                const string WordDirectoryPath = @"C:\temp";
+
+                var directoryProxyMock = Substitute.For<IDirectoryFacade>();
+                directoryProxyMock.GetFiles(Arg.Any<string>()).Returns(new string[0]);
+                directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
+
+                var fileProxyMock = Substitute.For<IFileFacade>();
+
+                Action construct = () =>
+                    new TextFileWordGenerator(directoryProxyMock, fileProxyMock, WordDirectoryPath, FileNameRegex);
+                construct.ShouldThrow<ArgumentException>();
+            }
+
+            [Fact]
+            public void ThrowsException_WhenEmptyFilesArePassed()
+            {
+                const string WordDirectoryPath = @"C:\temp";
+
+                var directoryProxyMock = Substitute.For<IDirectoryFacade>();
+                directoryProxyMock.GetFiles(WordDirectoryPath).Returns(new[] { @"C:\temp\nouns_01.txt" });
+                directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
+
+                var fileProxyMock = Substitute.For<IFileFacade>();
+                fileProxyMock.ReadAllLines(WordDirectoryPath).Returns(new string[0]);
+
+                Action construct = () =>
+                    new TextFileWordGenerator(directoryProxyMock, fileProxyMock, WordDirectoryPath, FileNameRegex);
+                construct.ShouldThrow<ArgumentException>();
+            }
+        }
+
+        public class ShortestWordLength
+        {
+            private readonly IDirectoryFacade directoryProxyMock;
+            private readonly IFileFacade fileProxyMock;
+
+            public ShortestWordLength()
+            {
+                this.directoryProxyMock = Substitute.For<IDirectoryFacade>();
+                this.directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
+
+                this.fileProxyMock = Substitute.For<IFileFacade>();
+            }
+
+            [Fact]
+            public void ReturnsCorrectValue_WhenOneLengthPassed()
+            {
+                const string FilePath = @"C:\temp\nouns_01.txt";
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(new[] { FilePath });
+                this.fileProxyMock.ReadAllLines(FilePath).Returns(new[] { "a" });
+
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock,
+                    this.fileProxyMock,
+                    WordDirectoryPath,
+                    FileNameRegex);
+
+                textFileWordGenerator.ShortestWordLength.Should().Be(1);
+            }
+
+            [Fact]
+            public void ReturnsCorrectValue_WhenTwoLengthsPassed()
+            {
+                string[] FilePaths = new[] { @"C:\temp\nouns_02.txt", @"C:\temp\nouns_30.txt" };
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(FilePaths);
+                this.fileProxyMock.ReadAllLines(FilePaths[0]).Returns(new[] { "ab" });
+                this.fileProxyMock.ReadAllLines(FilePaths[1]).Returns(Enumerable.Repeat("a", 30).ToArray());
+
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock,
+                    this.fileProxyMock,
+                    WordDirectoryPath,
+                    FileNameRegex);
+
+                textFileWordGenerator.ShortestWordLength.Should().Be(2);
+            }
+        }
+
+        public class LongestWordLength
+        {
+            private readonly IDirectoryFacade directoryProxyMock;
+            private readonly IFileFacade fileProxyMock;
+
+            public LongestWordLength()
+            {
+                this.directoryProxyMock = Substitute.For<IDirectoryFacade>();
+                this.directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
+
+                this.fileProxyMock = Substitute.For<IFileFacade>();
+            }
+
+            [Fact]
+            public void ReturnsCorrectValue_WhenOneLengthPassed()
+            {
+                const string FilePath = @"C:\temp\nouns_01.txt";
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(new[] { FilePath });
+                this.fileProxyMock.ReadAllLines(FilePath).Returns(new[] { "a" });
+
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock,
+                    this.fileProxyMock,
+                    WordDirectoryPath,
+                    FileNameRegex);
+
+                textFileWordGenerator.LongestWordLength.Should().Be(1);
+            }
+
+            [Fact]
+            public void ReturnsCorrectValue_WhenTwoLengthsPassed()
+            {
+                string[] FilePaths = new[] { @"C:\temp\nouns_02.txt", @"C:\temp\nouns_30.txt" };
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(FilePaths);
+                this.fileProxyMock.ReadAllLines(FilePaths[0]).Returns(new[] { "ab" });
+                this.fileProxyMock.ReadAllLines(FilePaths[1]).Returns(Enumerable.Repeat("a", 30).ToArray());
+
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock,
+                    this.fileProxyMock,
+                    WordDirectoryPath,
+                    FileNameRegex);
+
+                textFileWordGenerator.LongestWordLength.Should().Be(30);
+            }
         }
 
         public class GetRandomWordInt

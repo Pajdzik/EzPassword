@@ -21,8 +21,23 @@
             }
 
             string[] files = directory.GetFiles(wordDirectoryPath);
+
+            if (files.Length == 0)
+            {
+                throw new ArgumentException("At least one file has to be available");
+            }
+
             this.wordFiles = files.ToDictionary(f => GetWordLength(f, fileNameRegex), file.ReadAllLines);
+
+            if (!this.wordFiles.Any() || this.wordFiles.Select(keyValuePair => keyValuePair.Value).All(words => !words.Any()))
+            {
+                throw new ArgumentException("No words were loaded");
+            }
         }
+
+        public virtual int ShortestWordLength => this.wordFiles.Keys.Min();
+
+        public virtual int LongestWordLength => this.wordFiles.Keys.Max();
 
         public static string GetRandomWord(IDictionary<int, string[]> wordsByLength, int wordLength)
         {

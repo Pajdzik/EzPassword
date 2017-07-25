@@ -1,7 +1,11 @@
 ﻿namespace EzPassword.Core
 {
-    internal interface IRandomWordGenerator
+    public interface IRandomWordGenerator
     {
+        int ShortestWordLength { get; }
+
+        int LongestWordLength { get; }
+
         string GetRandomWord();
 
         string GetRandomWord(int wordLength);
