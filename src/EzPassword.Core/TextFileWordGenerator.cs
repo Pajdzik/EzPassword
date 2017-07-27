@@ -39,6 +39,8 @@
 
         public virtual int LongestWordLength => this.wordFiles.Keys.Max();
 
+        public IEnumerable<int> WordLengths => this.wordFiles.Keys;
+
         public static string GetRandomWord(IDictionary<int, string[]> wordsByLength, int wordLength)
         {
             if (!wordsByLength.ContainsKey(wordLength))
