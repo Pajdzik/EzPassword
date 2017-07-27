@@ -132,10 +132,10 @@
             [Fact]
             public void ReturnsCorrectValue_WhenTwoLengthsPassed()
             {
-                string[] FilePaths = new[] { @"C:\temp\nouns_02.txt", @"C:\temp\nouns_30.txt" };
-                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(FilePaths);
-                this.fileProxyMock.ReadAllLines(FilePaths[0]).Returns(new[] { "ab" });
-                this.fileProxyMock.ReadAllLines(FilePaths[1]).Returns(Enumerable.Repeat("a", 30).ToArray());
+                string[] filePaths = new[] { @"C:\temp\nouns_02.txt", @"C:\temp\nouns_30.txt" };
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(filePaths);
+                this.fileProxyMock.ReadAllLines(filePaths[0]).Returns(new[] { "ab" });
+                this.fileProxyMock.ReadAllLines(filePaths[1]).Returns(Enumerable.Repeat("a", 30).ToArray());
 
                 var textFileWordGenerator = new TextFileWordGenerator(
                     this.directoryProxyMock,
@@ -179,10 +179,10 @@
             [Fact]
             public void ReturnsCorrectValue_WhenTwoLengthsPassed()
             {
-                string[] FilePaths = new[] { @"C:\temp\nouns_02.txt", @"C:\temp\nouns_30.txt" };
-                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(FilePaths);
-                this.fileProxyMock.ReadAllLines(FilePaths[0]).Returns(new[] { "ab" });
-                this.fileProxyMock.ReadAllLines(FilePaths[1]).Returns(Enumerable.Repeat("a", 30).ToArray());
+                string[] filePaths = new[] { @"C:\temp\nouns_02.txt", @"C:\temp\nouns_30.txt" };
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(filePaths);
+                this.fileProxyMock.ReadAllLines(filePaths[0]).Returns(new[] { "ab" });
+                this.fileProxyMock.ReadAllLines(filePaths[1]).Returns(Enumerable.Repeat("a", 30).ToArray());
 
                 var textFileWordGenerator = new TextFileWordGenerator(
                     this.directoryProxyMock,
@@ -191,6 +191,53 @@
                     FileNameRegex);
 
                 textFileWordGenerator.LongestWordLength.Should().Be(30);
+            }
+        }
+
+        public class WordLengths
+        {
+            private readonly IDirectoryFacade directoryProxyMock;
+            private readonly IFileFacade fileProxyMock;
+
+            public WordLengths()
+            {
+                this.directoryProxyMock = Substitute.For<IDirectoryFacade>();
+                this.directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
+
+                this.fileProxyMock = Substitute.For<IFileFacade>();
+            }
+
+            [Fact]
+            public void ReturnsAllValues_WhenOneLengthPassed()
+            {
+                const string FilePath = @"C:\temp\nouns_01.txt";
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(new[] { FilePath });
+                this.fileProxyMock.ReadAllLines(FilePath).Returns(new[] { "a" });
+
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock,
+                    this.fileProxyMock,
+                    WordDirectoryPath,
+                    FileNameRegex);
+
+                textFileWordGenerator.WordLengths.Should().BeEquivalentTo(new int[] { 1 });
+            }
+
+            [Fact]
+            public void ReturnsCorrectValue_WhenTwoLengthsPassed()
+            {
+                string[] filePaths = new[] { @"C:\temp\nouns_02.txt", @"C:\temp\nouns_30.txt" };
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(filePaths);
+                this.fileProxyMock.ReadAllLines(filePaths[0]).Returns(new[] { "ab" });
+                this.fileProxyMock.ReadAllLines(filePaths[1]).Returns(Enumerable.Repeat("a", 30).ToArray());
+
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock,
+                    this.fileProxyMock,
+                    WordDirectoryPath,
+                    FileNameRegex);
+
+                textFileWordGenerator.WordLengths.Should().BeEquivalentTo(new int[] { 2, 30 });
             }
         }
 
