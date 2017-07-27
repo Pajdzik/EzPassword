@@ -7,11 +7,11 @@
 
     public class PasswordGenerator
     {
-        private readonly static Random Random = new Random();
+        private static readonly Random Random = new Random();
 
         private readonly IRandomWordGenerator adjectiveGenerator;
         private readonly IRandomWordGenerator nounGenerator;
-        private readonly IDictionary<int, IReadOnlyCollection<PasswordGeneratingChain>> operatorsByLength;
+        private readonly IDictionary<int, IList<PasswordGeneratingChain>> operatorsByLength;
 
         public PasswordGenerator(IRandomWordGenerator adjectiveGenerator, IRandomWordGenerator nounGenerator)
         {
@@ -26,6 +26,19 @@
 
         public IEnumerable<int> AvailableLengths => this.operatorsByLength.Keys;
 
+        public static IDictionary<int, IList<PasswordGeneratingChain>> CalculateAvailableLengths(IRandomWordGenerator adjectiveGenerator, IRandomWordGenerator nounGenerator)
+        {
+            var operatorsByLength = new Dictionary<int, IList<PasswordGeneratingChain>>();
+
+            AddNounOnlyGenerators(nounGenerator, operatorsByLength);
+            AddNounWithAdjectiveGenerators(adjectiveGenerator, nounGenerator, operatorsByLength);
+
+            Dictionary<int, IList<PasswordGeneratingChain>> readOnlyCollectionDict
+                = operatorsByLength.Keys.ToDictionary(key => key, key => operatorsByLength[key]);
+
+            return readOnlyCollectionDict;
+        }
+
         public Password Generate(int length)
         {
             if (!this.operatorsByLength.ContainsKey(length))
@@ -33,33 +46,27 @@
                 throw new ArgumentOutOfRangeException();
             }
 
-            IEnumerable<PasswordGeneratingChain> operators = this.operatorsByLength[length];
+            IList<PasswordGeneratingChain> operators = this.operatorsByLength[length];
+            PasswordGeneratingChain passwordGeneratingChain = PickRandomGenerator(operators);
+            Password password = passwordGeneratingChain.Generate();
 
-            return null;
+            return password;
         }
 
-        public static IDictionary<int, IReadOnlyCollection<PasswordGeneratingChain>> CalculateAvailableLengths(IRandomWordGenerator adjectiveGenerator, IRandomWordGenerator nounGenerator)
-        {
-            var operatorsByLength = new Dictionary<int, List<PasswordGeneratingChain>>();
-
-            AddNounOnlyGenerators(nounGenerator, operatorsByLength);
-            AddNounWithAdjectiveGenerators(adjectiveGenerator, nounGenerator, operatorsByLength);
-
-            Dictionary<int, IReadOnlyCollection<PasswordGeneratingChain>> readOnlyCollectionDict
-                = operatorsByLength.Keys.ToDictionary(key => key, key => (IReadOnlyCollection<PasswordGeneratingChain>)operatorsByLength[key].AsReadOnly());
-
-            return readOnlyCollectionDict;
-        }
-
-        private static void AddNounOnlyGenerators(IRandomWordGenerator nounGenerator, Dictionary<int, List<PasswordGeneratingChain>> operatorsByLength)
+        private static void AddNounOnlyGenerators(IRandomWordGenerator nounGenerator, Dictionary<int, IList<PasswordGeneratingChain>> operatorsByLength)
         {
             foreach (int length in nounGenerator.WordLengths)
             {
-                operatorsByLength.Add(length, new List<PasswordGeneratingChain> { new PasswordGeneratingChain(nounGenerator) });
+                operatorsByLength.Add(
+                    length, 
+                    new List<PasswordGeneratingChain>
+                    {
+                        new PasswordGeneratingChain(() => nounGenerator.GetRandomWord(length))
+                    });
             }
         }
 
-        private static void AddNounWithAdjectiveGenerators(IRandomWordGenerator adjectiveGenerator, IRandomWordGenerator nounGenerator, Dictionary<int, List<PasswordGeneratingChain>> operatorsByLength)
+        private static void AddNounWithAdjectiveGenerators(IRandomWordGenerator adjectiveGenerator, IRandomWordGenerator nounGenerator, Dictionary<int, IList<PasswordGeneratingChain>> operatorsByLength)
         {
             foreach (int nounLength in nounGenerator.WordLengths)
             {
@@ -67,21 +74,26 @@
                 {
                     int passwordLength = adjectiveLength + nounLength;
 
+                    var passwordGeneratingChain = new PasswordGeneratingChain(
+                            () => adjectiveGenerator.GetRandomWord(adjectiveLength),
+                            () => nounGenerator.GetRandomWord(nounLength));
+
                     if (operatorsByLength.ContainsKey(passwordLength))
                     {
-                        operatorsByLength[passwordLength].Add(new PasswordGeneratingChain(adjectiveGenerator, nounGenerator));
+                        operatorsByLength[passwordLength].Add(passwordGeneratingChain);
                     }
                     else
                     {
-                        operatorsByLength[passwordLength] = new List<PasswordGeneratingChain> { new PasswordGeneratingChain(adjectiveGenerator, nounGenerator) };
+                        operatorsByLength[passwordLength] = new List<PasswordGeneratingChain> { passwordGeneratingChain };
                     }
                 }
             }
         }
 
-        private static PasswordGeneratingChain PickRandomGenerator(IEnumerable<PasswordGeneratingChain> operators)
+        private static PasswordGeneratingChain PickRandomGenerator(IList<PasswordGeneratingChain> operators)
         {
-            throw new NotImplementedException();
+            int randomIndex = Random.Next(operators.Count);
+            return operators[randomIndex];
         }
     }
 }

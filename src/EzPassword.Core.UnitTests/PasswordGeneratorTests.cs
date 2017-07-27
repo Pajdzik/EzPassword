@@ -193,21 +193,18 @@
             [InlineData(new[] { 1, 3, 5, 7 }, new[] { 2, 4, 6, 8 }, 16)]
             public void ThrowsException_WhenLengthNotSupported(int[] adjectiveLengths, int[] wordLengths, int requestedLength)
             {
-                adjectiveGenerator.WordLengths.Returns(adjectiveLengths);
-
-                nounGenerator.WordLengths.Returns(wordLengths);
-
-                var passwordGenerator = new PasswordGenerator(adjectiveGenerator, nounGenerator);
+                this.adjectiveGenerator.WordLengths.Returns(adjectiveLengths);
+                this.nounGenerator.WordLengths.Returns(wordLengths);
+                var passwordGenerator = new PasswordGenerator(this.adjectiveGenerator, this.nounGenerator);
 
                 Action generate = () => passwordGenerator.Generate(requestedLength);
 
                 generate.ShouldThrow<ArgumentOutOfRangeException>();
             }
 
-
+            [Fact]
             public void F()
             {
-
             }
         }
     }

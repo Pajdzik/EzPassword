@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EzPassword.Core
+﻿namespace EzPassword.Core
 {
+    using System;
+
     [Flags]
     public enum PasswordType
     {

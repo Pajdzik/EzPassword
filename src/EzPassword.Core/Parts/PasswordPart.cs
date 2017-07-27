@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EzPassword.Core.Parts
+﻿namespace EzPassword.Core.Parts
 {
-    internal abstract class PasswordPart
+    public abstract class PasswordPart
     {
         public PasswordPart(char[] content)
         {
