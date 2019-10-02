@@ -14,7 +14,7 @@
             {
                 var nounGenerator = Substitute.For<IRandomWordGenerator>();
                 Action contruct = () => new PasswordGenerator(null, nounGenerator);
-                contruct.ShouldThrow<ArgumentNullException>();
+                contruct.Should().Throw<ArgumentNullException>();
             }
 
             [Fact]
@@ -22,7 +22,7 @@
             {
                 var adjectiveGenerator = Substitute.For<IRandomWordGenerator>();
                 Action contruct = () => new PasswordGenerator(adjectiveGenerator, null);
-                contruct.ShouldThrow<ArgumentNullException>();
+                contruct.Should().Throw<ArgumentNullException>();
             }
         }
 
@@ -95,7 +95,7 @@
             {
                 var nounGenerator = Substitute.For<IRandomWordGenerator>();
                 Action calculate = () => PasswordGenerator.CalculateAvailableLengths(null, nounGenerator);
-                calculate.ShouldThrow<ArgumentNullException>();
+                calculate.Should().Throw<ArgumentNullException>();
             }
 
             [Fact]
@@ -103,7 +103,7 @@
             {
                 var adjectiveGenerator = Substitute.For<IRandomWordGenerator>();
                 Action calculate = () => PasswordGenerator.CalculateAvailableLengths(adjectiveGenerator, null);
-                calculate.ShouldThrow<ArgumentNullException>();
+                calculate.Should().Throw<ArgumentNullException>();
             }
 
             [Fact]
@@ -199,7 +199,7 @@
 
                 Action generate = () => passwordGenerator.Generate(requestedLength);
 
-                generate.ShouldThrow<ArgumentOutOfRangeException>();
+                generate.Should().Throw<ArgumentOutOfRangeException>();
             }
 
             [Fact]

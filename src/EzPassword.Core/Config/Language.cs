@@ -28,13 +28,13 @@
 
         public string NounCategoryTitle { get; }
 
-        public CategoryMembersGenerator AdjectiveCategory => 
+        public CategoryMembersGenerator AdjectiveCategory =>
             new CategoryMembersGenerator(this.site, this.AdjectiveCategoryTitle)
             {
                 MemberTypes = CategoryMemberTypes.Page
             };
 
-        public CategoryMembersGenerator NounCategory => 
+        public CategoryMembersGenerator NounCategory =>
             new CategoryMembersGenerator(this.site, this.NounCategoryTitle)
             {
                 MemberTypes = CategoryMemberTypes.Page
@@ -51,13 +51,8 @@
 
         private WikiSite CreateSite(string wikiApiUrl)
         {
-            WikiSite site = null;
-
-            Task.Run(async () =>
-            {
-                var wikiClient = new WikiClient();
-                site = await WikiSite.CreateAsync(wikiClient, wikiApiUrl);
-            }).Wait();
+            var wikiClient = new WikiClient();
+            var site = new WikiSite(wikiClient, wikiApiUrl);
 
             return site;
         }

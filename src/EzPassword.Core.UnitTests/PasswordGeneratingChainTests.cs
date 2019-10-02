@@ -14,7 +14,7 @@
             public void ThrowsException_WhenNullCollectionPassed()
             {
                 Action construct = () => new PasswordGeneratingChain(null);
-                construct.ShouldThrow<ArgumentNullException>();
+                construct.Should().Throw<ArgumentNullException>();
             }
         }
 

@@ -20,7 +20,7 @@
             {
                 var fileProxyMock = Substitute.For<IFileFacade>();
                 Action construct = () => new TextFileWordGenerator(null, fileProxyMock, @"C:\temp", "template.txt");
-                construct.ShouldThrow<ArgumentNullException>();
+                construct.Should().Throw<ArgumentNullException>();
             }
 
             [Fact]
@@ -29,7 +29,7 @@
                 var directoryProxyMock = Substitute.For<IDirectoryFacade>();
                 var fileProxyMock = Substitute.For<IFileFacade>();
                 Action construct = () => new TextFileWordGenerator(directoryProxyMock, fileProxyMock, null, "template.txt");
-                construct.ShouldThrow<ArgumentNullException>();
+                construct.Should().Throw<ArgumentNullException>();
             }
 
             [Fact]
@@ -39,7 +39,7 @@
                 var fileProxyMock = Substitute.For<IFileFacade>();
                 Action construct = () =>
                     new TextFileWordGenerator(directoryProxyMock, fileProxyMock, @"C:\temp", null);
-                construct.ShouldThrow<ArgumentNullException>();
+                construct.Should().Throw<ArgumentNullException>();
             }
 
             [Fact]
@@ -48,7 +48,7 @@
                 var fileProxyMock = Substitute.For<IFileFacade>();
                 Action construct = () =>
                     new TextFileWordGenerator(null, fileProxyMock, @"C:\temp", "template.txt");
-                construct.ShouldThrow<ArgumentNullException>();
+                construct.Should().Throw<ArgumentNullException>();
             }
 
             [Fact]
@@ -63,7 +63,7 @@
 
                 Action construct = () =>
                     new TextFileWordGenerator(directoryProxyMock, fileProxyMock, WordDirectoryPath, FileNameRegex);
-                construct.ShouldThrow<ArgumentException>();
+                construct.Should().Throw<ArgumentException>();
             }
 
             [Fact]
@@ -79,7 +79,7 @@
 
                 Action construct = () =>
                     new TextFileWordGenerator(directoryProxyMock, fileProxyMock, WordDirectoryPath, FileNameRegex);
-                construct.ShouldThrow<ArgumentException>();
+                construct.Should().Throw<ArgumentException>();
             }
 
             [Fact]
@@ -96,7 +96,7 @@
 
                 Action construct = () =>
                     new TextFileWordGenerator(directoryProxyMock, fileProxyMock, WordDirectoryPath, FileNameRegex);
-                construct.ShouldThrow<ArgumentException>();
+                construct.Should().Throw<ArgumentException>();
             }
         }
 
@@ -329,7 +329,7 @@
 
                 Action action = () => textFileWordGenerator.GetRandomWord(2);
 
-                action.ShouldThrow<ArgumentOutOfRangeException>();
+                action.Should().Throw<ArgumentOutOfRangeException>();
             }
         }
         
