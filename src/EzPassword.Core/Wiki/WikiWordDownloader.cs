@@ -4,8 +4,6 @@
     using System.Linq;
     using System.Reactive.Disposables;
     using System.Reactive.Linq;
-    using Config;
-    using WikiClientLibrary.Client;
     using WikiClientLibrary.Generators;
 
     public class WikiWordDownloader : IWordDownloader
