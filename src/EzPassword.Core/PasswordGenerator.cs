@@ -43,7 +43,7 @@
         {
             if (!this.operatorsByLength.ContainsKey(length))
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException($"Generator doesn't contain words with {length} length");
             }
 
             IList<PasswordGeneratingChain> operators = this.operatorsByLength[length];

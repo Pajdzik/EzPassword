@@ -18,17 +18,18 @@
 
         private static void Main(string[] args)
         {
-            var option = new CommandLineOptions();
-            bool isValid = Parser.Default.ParseArgumentsStrict(args, option);
+            ParserResult<CommandLineOptions> parserResult = Parser.Default.ParseArguments<CommandLineOptions>(args);
+            parserResult.WithParsed(options =>
+            {
+                IDictionary<string, Language> wikiConfig = ReadWikiConfig();
+                Language language = wikiConfig[options.LanguageSymbol];
 
-            IDictionary<string, Language> wikiConfig = ReadWikiConfig();
-            Language language = wikiConfig[option.LanguageSymbol];
+                IEnumerable<Task> tasks = RunTasks(language, options.OutDirectory);
 
-            IEnumerable<Task> tasks = RunTasks(language, option.OutDirectory);
+                Task.WhenAll(tasks).Wait();
 
-            Task.WhenAll(tasks).Wait();
-
-            Console.WriteLine("Completed!");
+                Console.WriteLine("Completed!");
+            });
         }
 
         private static IEnumerable<Task> RunTasks(Language language, string outDirectory)

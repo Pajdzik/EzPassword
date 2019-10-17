@@ -3,12 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Eks.Abstraction.System.IO;
+    using Kpax.Abstraction.System.IO;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
 
-    public class TextFileWordGeneratorTests
+    public sealed class TextFileWordGeneratorTests
     {
         private const string WordDirectoryPath = @"C:\temp";
         private const string FileNameRegex = @"nouns_(\d+).txt";
@@ -20,7 +20,7 @@
             {
                 var fileProxyMock = Substitute.For<IFileFacade>();
                 Action construct = () => new TextFileWordGenerator(null, fileProxyMock, @"C:\temp", "template.txt");
-                construct.Should().Throw<ArgumentNullException>();
+                construct.Should().Throw<ArgumentException>();
             }
 
             [Fact]
@@ -29,7 +29,7 @@
                 var directoryProxyMock = Substitute.For<IDirectoryFacade>();
                 var fileProxyMock = Substitute.For<IFileFacade>();
                 Action construct = () => new TextFileWordGenerator(directoryProxyMock, fileProxyMock, null, "template.txt");
-                construct.Should().Throw<ArgumentNullException>();
+                construct.Should().Throw<ArgumentException>();
             }
 
             [Fact]
@@ -72,7 +72,7 @@
                 const string WordDirectoryPath = @"C:\temp";
 
                 var directoryProxyMock = Substitute.For<IDirectoryFacade>();
-                directoryProxyMock.GetFiles(Arg.Any<string>()).Returns(new string[0]);
+                directoryProxyMock.GetFiles(Arg.Any<string>()).Returns(Array.Empty<string>());
                 directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
 
                 var fileProxyMock = Substitute.For<IFileFacade>();
@@ -92,7 +92,7 @@
                 directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
 
                 var fileProxyMock = Substitute.For<IFileFacade>();
-                fileProxyMock.ReadAllLines(WordDirectoryPath).Returns(new string[0]);
+                fileProxyMock.ReadAllLines(WordDirectoryPath).Returns(Array.Empty<string>());
 
                 Action construct = () =>
                     new TextFileWordGenerator(directoryProxyMock, fileProxyMock, WordDirectoryPath, FileNameRegex);

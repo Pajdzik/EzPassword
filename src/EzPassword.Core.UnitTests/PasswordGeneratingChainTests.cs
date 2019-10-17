@@ -6,7 +6,7 @@
     using FluentAssertions;
     using Xunit;
 
-    public class PasswordGeneratingChainTests
+    public sealed class PasswordGeneratingChainTests
     {
         public class Ctor
         {

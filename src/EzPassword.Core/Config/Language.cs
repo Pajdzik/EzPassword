@@ -1,12 +1,12 @@
 ﻿namespace EzPassword.Core.Config
 {
     using System;
-    using System.Threading.Tasks;
+    using System.Collections.Generic;
     using WikiClientLibrary.Client;
     using WikiClientLibrary.Generators;
     using WikiClientLibrary.Sites;
 
-    public struct Language
+    public struct Language : IEquatable<Language>
     {
         private readonly WikiSite site;
 
@@ -16,6 +16,11 @@
             this.WikiApi = wikiApi;
             this.AdjectiveCategoryTitle = adjectiveCategoryTitle;
             this.NounCategoryTitle = nounCategoryTitle;
+
+            if (this.WikiApi == null)
+            {
+                throw new ArgumentNullException($"{nameof(this.WikiApi)} cannot be null");
+            }
 
             this.site = this.CreateSite(this.WikiApi.AbsoluteUri);
         }
@@ -49,12 +54,44 @@
                 nounCategoryUrl);
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is Language && this.Equals((Language) obj);
+        }
+
+        public readonly override int GetHashCode()
+        {
+            return HashCode.Combine(site, Symbol, WikiApi, AdjectiveCategoryTitle, NounCategoryTitle, AdjectiveCategory, NounCategory);
+        }
+
         private WikiSite CreateSite(string wikiApiUrl)
         {
-            var wikiClient = new WikiClient();
-            var site = new WikiSite(wikiClient, wikiApiUrl);
+            using (var wikiClient = new WikiClient())
+            {
+                var site = new WikiSite(wikiClient, wikiApiUrl);
+                return site;
+            }
+        }
 
-            return site;
+        public static bool operator ==(Language left, Language right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Language left, Language right)
+        {
+            return !(left == right);
+        }
+
+        public bool Equals(Language other)
+        {
+            return EqualityComparer<WikiSite>.Default.Equals(site, other.site) &&
+                   Symbol == other.Symbol &&
+                   EqualityComparer<Uri>.Default.Equals(WikiApi, other.WikiApi) &&
+                   AdjectiveCategoryTitle == other.AdjectiveCategoryTitle &&
+                   NounCategoryTitle == other.NounCategoryTitle &&
+                   EqualityComparer<CategoryMembersGenerator>.Default.Equals(AdjectiveCategory, other.AdjectiveCategory) &&
+                   EqualityComparer<CategoryMembersGenerator>.Default.Equals(NounCategory, other.NounCategory);
         }
     }
 }

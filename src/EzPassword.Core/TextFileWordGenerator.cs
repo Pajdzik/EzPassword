@@ -5,7 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using Eks.Abstraction.System.IO;
+    using Kpax.Abstraction.System.IO;
 
     public class TextFileWordGenerator : IRandomWordGenerator
     {

@@ -5,7 +5,7 @@
     using NSubstitute;
     using Xunit;
 
-    public class PasswordGeneratorTests
+    public sealed class PasswordGeneratorTests
     {
         public class Ctor
         {
@@ -32,7 +32,7 @@
             public void ReturnsShortestNounLength_ForSingleNounGenerator()
             {
                 var adjectiveGenerator = Substitute.For<IRandomWordGenerator>();
-                adjectiveGenerator.WordLengths.Returns(new int[] { });
+                adjectiveGenerator.WordLengths.Returns(Array.Empty<int>());
 
                 var nounGenerator = Substitute.For<IRandomWordGenerator>();
                 nounGenerator.WordLengths.Returns(new[] { 1 });
@@ -63,7 +63,7 @@
             public void ReturnsLongestNounLength_ForSingleNounGenerator()
             {
                 var adjectiveGenerator = Substitute.For<IRandomWordGenerator>();
-                adjectiveGenerator.WordLengths.Returns(new int[] { });
+                adjectiveGenerator.WordLengths.Returns(Array.Empty<int>());
 
                 var nounGenerator = Substitute.For<IRandomWordGenerator>();
                 nounGenerator.WordLengths.Returns(new[] { 10 });
@@ -110,7 +110,7 @@
             public void ForSingleNounGenerator_OneChainIsGenerated()
             {
                 var adjectiveGenerator = Substitute.For<IRandomWordGenerator>();
-                adjectiveGenerator.WordLengths.Returns(new int[] { });
+                adjectiveGenerator.WordLengths.Returns(Array.Empty<int>());
 
                 var nounGenerator = Substitute.For<IRandomWordGenerator>();
                 nounGenerator.WordLengths.Returns(new[] { 1 });
@@ -125,7 +125,7 @@
             public void ForNounGeneratorWithThreeLengths_ThreeChainsAreGenerated()
             {
                 var adjectiveGenerator = Substitute.For<IRandomWordGenerator>();
-                adjectiveGenerator.WordLengths.Returns(new int[] { });
+                adjectiveGenerator.WordLengths.Returns(Array.Empty<int>());
 
                 var nounGenerator = Substitute.For<IRandomWordGenerator>();
                 nounGenerator.WordLengths.Returns(new[] { 1, 5, 15 });

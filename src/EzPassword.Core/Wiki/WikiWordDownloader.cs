@@ -17,10 +17,11 @@
 
         public IDisposable Subscribe(IObserver<string> observer)
         {
-            this.categoryMembersGenerator
-                .EnumPagesAsync()
-                .ForEachAsync(page => { observer.OnNext(page.Title); })
-                .ContinueWith(task => { observer.OnCompleted(); });
+            // TODO: Fix this
+            //this.categoryMembersGenerator
+            //    .EnumPagesAsync()
+            //    .ForEachAsync(page => { observer.OnNext(page.Title); })
+            //    .ContinueWith(task => { observer.OnCompleted(); });
 
             return Disposable.Empty;
         }
