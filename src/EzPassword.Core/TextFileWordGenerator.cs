@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
@@ -17,7 +18,7 @@
         {
             if (!directory.Exists(wordDirectoryPath))
             {
-                throw new ArgumentException(nameof(wordDirectoryPath));
+                throw new ArgumentException($"\"{nameof(wordDirectoryPath)}\" doesn't exist");
             }
 
             string[] files = directory.GetFiles(wordDirectoryPath);
@@ -72,7 +73,7 @@
             string fileNameWithoutExtension = Path.GetFileName(fileName);
             Match match = Regex.Match(fileNameWithoutExtension, fileNameRegex);
 
-            return int.Parse(match.Groups[1].Value);
+            return int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
         }
     }
 }
