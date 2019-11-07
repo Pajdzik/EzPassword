@@ -33,13 +33,13 @@
 
         public string NounCategoryTitle { get; }
 
-        public CategoryMembersGenerator AdjectiveCategory =>
+        public readonly CategoryMembersGenerator AdjectiveCategory =>
             new CategoryMembersGenerator(this.site, this.AdjectiveCategoryTitle)
             {
                 MemberTypes = CategoryMemberTypes.Page
             };
 
-        public CategoryMembersGenerator NounCategory =>
+        public readonly CategoryMembersGenerator NounCategory =>
             new CategoryMembersGenerator(this.site, this.NounCategoryTitle)
             {
                 MemberTypes = CategoryMemberTypes.Page
@@ -56,7 +56,7 @@
 
         public override bool Equals(object obj)
         {
-            return obj is Language && this.Equals((Language) obj);
+            return obj != null && obj is Language && this.Equals((Language)obj);
         }
 
         public readonly override int GetHashCode()
@@ -66,11 +66,10 @@
 
         private WikiSite CreateSite(string wikiApiUrl)
         {
-            using (var wikiClient = new WikiClient())
-            {
-                var site = new WikiSite(wikiClient, wikiApiUrl);
-                return site;
-            }
+            using var wikiClient = new WikiClient();
+            var site = new WikiSite(wikiClient, wikiApiUrl);
+            site.Initialization.Wait();
+            return site;
         }
 
         public static bool operator ==(Language left, Language right)
