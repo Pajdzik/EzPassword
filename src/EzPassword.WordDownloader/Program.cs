@@ -1,6 +1,5 @@
 ﻿namespace EzPassword.WordDownloader
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -8,55 +7,47 @@
     using System.Threading.Tasks;
     using CommandLine;
     using Core.Config;
-    using Core.Wiki;
+    using EzPassword.Core.Wiki;
     using Newtonsoft.Json;
     using NLog;
+    using WikiClientLibrary.Client;
+    using WikiClientLibrary.Generators;
+    using WikiClientLibrary.Pages;
+    using WikiClientLibrary.Sites;
 
     internal class Program
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             ParserResult<CommandLineOptions> parserResult = Parser.Default.ParseArguments<CommandLineOptions>(args);
-            parserResult.WithParsed(options =>
+            await parserResult.MapResult(async options =>
             {
                 IDictionary<string, Language> wikiConfig = ReadWikiConfig();
                 Language language = wikiConfig[options.LanguageSymbol];
-
-                IEnumerable<Task> tasks = RunTasks(language, options.OutDirectory);
-
-                Task.WhenAll(tasks).Wait();
-
-                Console.WriteLine("Completed!");
-            });
+                await RunTasks(language, options.OutDirectory).ConfigureAwait(true);
+            }, (_) => Task.CompletedTask).ConfigureAwait(true);
         }
 
-        private static IEnumerable<Task> RunTasks(Language language, string outDirectory)
+        private static async Task RunTasks(Language language, string outDirectory)
         {
-            Task nounTask = Task.Run(() =>
+            using var client = new WikiClient
             {
-                IObservable<string> nounGenerator = new WikiWordDownloader(language.NounCategory);
-                var nounSubscriber = new TextFileWordPersister(
-                    $@"{outDirectory}\{language.Symbol}\{WordDirectoryConfig.NounDirectoryName}",
-                    WordDirectoryConfig.NounFileNameTemplate);
-                Logger.Info("Saving nouns starting with letters: ");
-                nounGenerator.Subscribe(nounSubscriber);
-                nounGenerator.Wait();
-            });
-            yield return nounTask;
+                ClientUserAgent = "WCLQuickStart/1.0"
+            };
 
-            Task adjectiveTask = Task.Run(() =>
-            {
-                IObservable<string> adjectiveGenerator = new WikiWordDownloader(language.AdjectiveCategory);
-                var adjectiveSubscriber = new TextFileWordPersister(
-                    $@"{outDirectory}\{language.Symbol}\{WordDirectoryConfig.AdjectiveDirectoryName}",
-                    WordDirectoryConfig.AdjectiveFileNameTemplate);
-                Logger.Info("Saving adjectives starting with letters: ");
-                adjectiveGenerator.Subscribe(adjectiveSubscriber);
-                adjectiveGenerator.Wait();
-            });
-            yield return adjectiveTask;
+            var site = new WikiSite(client, "https://pl.wiktionary.org/w/api.php");
+            await site.Initialization.ConfigureAwait(true);
+
+            var page = new WikiPage(site, "Kategoria:Język polski - przymiotniki");
+            var generator = new CategoryMembersGenerator(page);
+            var observable = generator.EnumPagesAsync().Where((page, b) => !page.IsSpecialPage).ToObservable();
+
+            var observer = new TextFileWordPersister(outDirectory, WordDirectoryConfig.AdjectiveFileNameTemplate);
+            observable.Subscribe(observer);
+
+            await observable;
         }
 
         private static IDictionary<string, Language> ReadWikiConfig()

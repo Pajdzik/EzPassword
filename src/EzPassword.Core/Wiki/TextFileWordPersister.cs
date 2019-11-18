@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using NLog;
+    using WikiClientLibrary.Pages;
 
     public class TextFileWordPersister : IWordPersister
     {
@@ -24,8 +25,9 @@
             CreateDirectory(directoryPath);
         }
 
-        public void OnNext(string value)
+        public void OnNext(WikiPage page)
         {
+            string value = page.Title;
             string firstTwoLetters = value.Substring(0, Math.Min(2, value.Length));
             if (!String.Equals(this.lastFirstTwoLetters, firstTwoLetters, StringComparison.InvariantCultureIgnoreCase))
             {
