@@ -14,7 +14,6 @@
             var page = new WikiPage(site, categoryTitle);
             var generator = new CategoryMembersGenerator(page);
             var observable = generator.EnumPagesAsync()
-                .Take(500)
                 .Where((page, b) => !page.IsSpecialPage)
                 .ToObservable();
             

@@ -41,10 +41,14 @@
             var factory = new WikiWordDownloaderFactory();
             var (adjectiveDownloader, nounDownloader) = factory.CreateLanguageDownloaders(site, language);
 
-            var adjectivePersister = new TextFileWordPersister(outDirectory, WordDirectoryConfig.AdjectiveFileNameTemplate);
+            var adjectivePersister = new TextFileWordPersister(
+                Path.Join(outDirectory, WordDirectoryConfig.AdjectiveDirectoryName),
+                WordDirectoryConfig.AdjectiveFileNameTemplate);
             adjectiveDownloader.Subscribe(adjectivePersister);
 
-            var nounPersister = new TextFileWordPersister(outDirectory, WordDirectoryConfig.NounFileNameTemplate);
+            var nounPersister = new TextFileWordPersister(
+                Path.Join(outDirectory, WordDirectoryConfig.NounDirectoryName),
+                WordDirectoryConfig.NounFileNameTemplate);
             nounDownloader.Subscribe(nounPersister);
 
             await Task.WhenAll(adjectiveDownloader.ToTask(), nounDownloader.ToTask());
