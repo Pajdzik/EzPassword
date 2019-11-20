@@ -4,20 +4,18 @@
     using System.IO;
     using System.Linq;
     using System.Reactive.Linq;
+    using System.Reactive.Threading.Tasks;
     using System.Threading.Tasks;
     using CommandLine;
     using Core.Config;
     using EzPassword.Core.Wiki;
     using Newtonsoft.Json;
-    using NLog;
     using WikiClientLibrary.Client;
-    using WikiClientLibrary.Generators;
-    using WikiClientLibrary.Pages;
     using WikiClientLibrary.Sites;
 
     internal class Program
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        // private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static async Task Main(string[] args)
         {
@@ -37,17 +35,19 @@
                 ClientUserAgent = "WCLQuickStart/1.0"
             };
 
-            var site = new WikiSite(client, "https://pl.wiktionary.org/w/api.php");
+            var site = new WikiSite(client, language.WikiApi.ToString());
             await site.Initialization.ConfigureAwait(true);
 
-            var page = new WikiPage(site, "Kategoria:Język polski - przymiotniki");
-            var generator = new CategoryMembersGenerator(page);
-            var observable = generator.EnumPagesAsync().Where((page, b) => !page.IsSpecialPage).ToObservable();
+            var factory = new WikiWordDownloaderFactory();
+            var (adjectiveDownloader, nounDownloader) = factory.CreateLanguageDownloaders(site, language);
 
-            var observer = new TextFileWordPersister(outDirectory, WordDirectoryConfig.AdjectiveFileNameTemplate);
-            observable.Subscribe(observer);
+            var adjectivePersister = new TextFileWordPersister(outDirectory, WordDirectoryConfig.AdjectiveFileNameTemplate);
+            adjectiveDownloader.Subscribe(adjectivePersister);
 
-            await observable;
+            var nounPersister = new TextFileWordPersister(outDirectory, WordDirectoryConfig.NounFileNameTemplate);
+            nounDownloader.Subscribe(nounPersister);
+
+            await Task.WhenAll(adjectiveDownloader.ToTask(), nounDownloader.ToTask());
         }
 
         private static IDictionary<string, Language> ReadWikiConfig()
