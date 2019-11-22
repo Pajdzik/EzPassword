@@ -1,14 +1,16 @@
 ﻿namespace EzPassword.Core.Parts
 {
+    using System.Collections.Generic;
+
     public abstract class PasswordPart
     {
-        public PasswordPart(char[] content)
+        public PasswordPart(IList<char> content)
         {
             this.Content = content;
         }
 
-        public char[] Content { get; private set; }
+        public IList<char> Content { get; private set; }
 
-        public int Length => this.Content.Length;
+        public int Length => this.Content.Count;
     }
 }

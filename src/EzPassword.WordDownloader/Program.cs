@@ -7,7 +7,7 @@
     using System.Reactive.Threading.Tasks;
     using System.Threading.Tasks;
     using CommandLine;
-    using Core.Config;
+    using EzPassword.Core.Config;
     using EzPassword.Core.Wiki;
     using Newtonsoft.Json;
     using WikiClientLibrary.Client;
@@ -23,8 +23,8 @@
             await parserResult.MapResult(async options =>
             {
                 IDictionary<string, Language> wikiConfig = ReadWikiConfig();
-                Language language = wikiConfig[options.LanguageSymbol];
-                await RunTasks(language, options.OutDirectory).ConfigureAwait(true);
+                Language language = wikiConfig[options.LanguageSymbol!];
+                await RunTasks(language, options.OutDirectory!).ConfigureAwait(true);
             }, (_) => Task.CompletedTask).ConfigureAwait(true);
         }
 
@@ -51,7 +51,8 @@
                 WordDirectoryConfig.NounFileNameTemplate);
             nounDownloader.Subscribe(nounPersister);
 
-            await Task.WhenAll(adjectiveDownloader.ToTask(), nounDownloader.ToTask());
+            await Task.WhenAll(adjectiveDownloader.ToTask(), nounDownloader.ToTask())
+                .ConfigureAwait(true);
         }
 
         private static IDictionary<string, Language> ReadWikiConfig()
