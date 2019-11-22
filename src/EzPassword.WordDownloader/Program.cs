@@ -1,67 +1,63 @@
 ﻿namespace EzPassword.WordDownloader
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Reactive.Linq;
+    using System.Reactive.Threading.Tasks;
     using System.Threading.Tasks;
     using CommandLine;
     using Core.Config;
-    using Core.Wiki;
+    using EzPassword.Core.Wiki;
     using Newtonsoft.Json;
-    using NLog;
+    using WikiClientLibrary.Client;
+    using WikiClientLibrary.Sites;
 
     internal class Program
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        // private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            var option = new CommandLineOptions();
-            bool isValid = Parser.Default.ParseArgumentsStrict(args, option);
-
-            IDictionary<string, Language> wikiConfig = ReadWikiConfig();
-            Language language = wikiConfig[option.LanguageSymbol];
-
-            IEnumerable<Task> tasks = RunTasks(language, option.OutDirectory);
-
-            Task.WhenAll(tasks).Wait();
-
-            Console.WriteLine("Completed!");
+            ParserResult<CommandLineOptions> parserResult = Parser.Default.ParseArguments<CommandLineOptions>(args);
+            await parserResult.MapResult(async options =>
+            {
+                IDictionary<string, Language> wikiConfig = ReadWikiConfig();
+                Language language = wikiConfig[options.LanguageSymbol];
+                await RunTasks(language, options.OutDirectory).ConfigureAwait(true);
+            }, (_) => Task.CompletedTask).ConfigureAwait(true);
         }
 
-        private static IEnumerable<Task> RunTasks(Language language, string outDirectory)
+        private static async Task RunTasks(Language language, string outDirectory)
         {
-            Task nounTask = Task.Run(() =>
+            using var client = new WikiClient
             {
-                IObservable<string> nounGenerator = new WikiWordDownloader(language.NounCategory);
-                var nounSubscriber = new TextFileWordPersister(
-                    $@"{outDirectory}\{language.Symbol}\{WordDirectoryConfig.NounDirectoryName}",
-                    WordDirectoryConfig.NounFileNameTemplate);
-                Logger.Info("Saving nouns starting with letters: ");
-                nounGenerator.Subscribe(nounSubscriber);
-                nounGenerator.Wait();
-            });
-            yield return nounTask;
+                ClientUserAgent = "WCLQuickStart/1.0"
+            };
 
-            Task adjectiveTask = Task.Run(() =>
-            {
-                IObservable<string> adjectiveGenerator = new WikiWordDownloader(language.AdjectiveCategory);
-                var adjectiveSubscriber = new TextFileWordPersister(
-                    $@"{outDirectory}\{language.Symbol}\{WordDirectoryConfig.AdjectiveDirectoryName}",
-                    WordDirectoryConfig.AdjectiveFileNameTemplate);
-                Logger.Info("Saving adjectives starting with letters: ");
-                adjectiveGenerator.Subscribe(adjectiveSubscriber);
-                adjectiveGenerator.Wait();
-            });
-            yield return adjectiveTask;
+            var site = new WikiSite(client, language.WikiApi.ToString());
+            await site.Initialization.ConfigureAwait(true);
+
+            var factory = new WikiWordDownloaderFactory();
+            var (adjectiveDownloader, nounDownloader) = factory.CreateLanguageDownloaders(site, language);
+
+            var adjectivePersister = new TextFileWordPersister(
+                Path.Join(outDirectory, WordDirectoryConfig.AdjectiveDirectoryName),
+                WordDirectoryConfig.AdjectiveFileNameTemplate);
+            adjectiveDownloader.Subscribe(adjectivePersister);
+
+            var nounPersister = new TextFileWordPersister(
+                Path.Join(outDirectory, WordDirectoryConfig.NounDirectoryName),
+                WordDirectoryConfig.NounFileNameTemplate);
+            nounDownloader.Subscribe(nounPersister);
+
+            await Task.WhenAll(adjectiveDownloader.ToTask(), nounDownloader.ToTask());
         }
 
         private static IDictionary<string, Language> ReadWikiConfig()
         {
-            const string wikiConfigFileName = "WikiConfig.json";
-            var wikiConfig = File.ReadAllText(wikiConfigFileName);
+            const string WikiConfigFileName = "WikiConfig.json";
+            var wikiConfig = File.ReadAllText(WikiConfigFileName);
             var languages = JsonConvert.DeserializeObject<List<Language>>(wikiConfig);
             return languages.ToDictionary(lang => lang.Symbol, lang => lang);
         }

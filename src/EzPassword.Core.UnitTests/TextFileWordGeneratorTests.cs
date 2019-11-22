@@ -3,12 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Eks.Abstraction.System.IO;
+    using Kpax.Abstraction.System.IO;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
 
-    public class TextFileWordGeneratorTests
+    public sealed class TextFileWordGeneratorTests
     {
         private const string WordDirectoryPath = @"C:\temp";
         private const string FileNameRegex = @"nouns_(\d+).txt";
@@ -20,7 +20,7 @@
             {
                 var fileProxyMock = Substitute.For<IFileFacade>();
                 Action construct = () => new TextFileWordGenerator(null, fileProxyMock, @"C:\temp", "template.txt");
-                construct.ShouldThrow<ArgumentNullException>();
+                construct.Should().Throw<ArgumentException>();
             }
 
             [Fact]
@@ -29,7 +29,7 @@
                 var directoryProxyMock = Substitute.For<IDirectoryFacade>();
                 var fileProxyMock = Substitute.For<IFileFacade>();
                 Action construct = () => new TextFileWordGenerator(directoryProxyMock, fileProxyMock, null, "template.txt");
-                construct.ShouldThrow<ArgumentNullException>();
+                construct.Should().Throw<ArgumentException>();
             }
 
             [Fact]
@@ -39,7 +39,7 @@
                 var fileProxyMock = Substitute.For<IFileFacade>();
                 Action construct = () =>
                     new TextFileWordGenerator(directoryProxyMock, fileProxyMock, @"C:\temp", null);
-                construct.ShouldThrow<ArgumentNullException>();
+                construct.Should().Throw<ArgumentNullException>();
             }
 
             [Fact]
@@ -48,22 +48,196 @@
                 var fileProxyMock = Substitute.For<IFileFacade>();
                 Action construct = () =>
                     new TextFileWordGenerator(null, fileProxyMock, @"C:\temp", "template.txt");
-                construct.ShouldThrow<ArgumentNullException>();
+                construct.Should().Throw<ArgumentNullException>();
             }
 
             [Fact]
             public void ThrowsException_WhenDirectoryDoesntExist()
             {
-                const string wordDirectoryPath = @"C:\temp";
+                const string WordDirectoryPath = @"C:\temp";
 
                 var directoryProxyMock = Substitute.For<IDirectoryFacade>();
-                directoryProxyMock.Exists(wordDirectoryPath).Returns(false);
+                directoryProxyMock.Exists(WordDirectoryPath).Returns(false);
 
                 var fileProxyMock = Substitute.For<IFileFacade>();
 
                 Action construct = () =>
-                    new TextFileWordGenerator(directoryProxyMock, fileProxyMock, wordDirectoryPath, FileNameRegex);
-                construct.ShouldThrow<ArgumentException>();
+                    new TextFileWordGenerator(directoryProxyMock, fileProxyMock, WordDirectoryPath, FileNameRegex);
+                construct.Should().Throw<ArgumentException>();
+            }
+
+            [Fact]
+            public void ThrowsException_WhenNoFilesAreAvailable()
+            {
+                const string WordDirectoryPath = @"C:\temp";
+
+                var directoryProxyMock = Substitute.For<IDirectoryFacade>();
+                directoryProxyMock.GetFiles(Arg.Any<string>()).Returns(Array.Empty<string>());
+                directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
+
+                var fileProxyMock = Substitute.For<IFileFacade>();
+
+                Action construct = () =>
+                    new TextFileWordGenerator(directoryProxyMock, fileProxyMock, WordDirectoryPath, FileNameRegex);
+                construct.Should().Throw<ArgumentException>();
+            }
+
+            [Fact]
+            public void ThrowsException_WhenEmptyFilesArePassed()
+            {
+                const string WordDirectoryPath = @"C:\temp";
+
+                var directoryProxyMock = Substitute.For<IDirectoryFacade>();
+                directoryProxyMock.GetFiles(WordDirectoryPath).Returns(new[] { @"C:\temp\nouns_01.txt" });
+                directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
+
+                var fileProxyMock = Substitute.For<IFileFacade>();
+                fileProxyMock.ReadAllLines(WordDirectoryPath).Returns(Array.Empty<string>());
+
+                Action construct = () =>
+                    new TextFileWordGenerator(directoryProxyMock, fileProxyMock, WordDirectoryPath, FileNameRegex);
+                construct.Should().Throw<ArgumentException>();
+            }
+        }
+
+        public class ShortestWordLength
+        {
+            private readonly IDirectoryFacade directoryProxyMock;
+            private readonly IFileFacade fileProxyMock;
+
+            public ShortestWordLength()
+            {
+                this.directoryProxyMock = Substitute.For<IDirectoryFacade>();
+                this.directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
+
+                this.fileProxyMock = Substitute.For<IFileFacade>();
+            }
+
+            [Fact]
+            public void ReturnsCorrectValue_WhenOneLengthPassed()
+            {
+                const string FilePath = @"C:\temp\nouns_01.txt";
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(new[] { FilePath });
+                this.fileProxyMock.ReadAllLines(FilePath).Returns(new[] { "a" });
+
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock,
+                    this.fileProxyMock,
+                    WordDirectoryPath,
+                    FileNameRegex);
+
+                textFileWordGenerator.ShortestWordLength.Should().Be(1);
+            }
+
+            [Fact]
+            public void ReturnsCorrectValue_WhenTwoLengthsPassed()
+            {
+                string[] filePaths = new[] { @"C:\temp\nouns_02.txt", @"C:\temp\nouns_30.txt" };
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(filePaths);
+                this.fileProxyMock.ReadAllLines(filePaths[0]).Returns(new[] { "ab" });
+                this.fileProxyMock.ReadAllLines(filePaths[1]).Returns(Enumerable.Repeat("a", 30).ToArray());
+
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock,
+                    this.fileProxyMock,
+                    WordDirectoryPath,
+                    FileNameRegex);
+
+                textFileWordGenerator.ShortestWordLength.Should().Be(2);
+            }
+        }
+
+        public class LongestWordLength
+        {
+            private readonly IDirectoryFacade directoryProxyMock;
+            private readonly IFileFacade fileProxyMock;
+
+            public LongestWordLength()
+            {
+                this.directoryProxyMock = Substitute.For<IDirectoryFacade>();
+                this.directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
+
+                this.fileProxyMock = Substitute.For<IFileFacade>();
+            }
+
+            [Fact]
+            public void ReturnsCorrectValue_WhenOneLengthPassed()
+            {
+                const string FilePath = @"C:\temp\nouns_01.txt";
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(new[] { FilePath });
+                this.fileProxyMock.ReadAllLines(FilePath).Returns(new[] { "a" });
+
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock,
+                    this.fileProxyMock,
+                    WordDirectoryPath,
+                    FileNameRegex);
+
+                textFileWordGenerator.LongestWordLength.Should().Be(1);
+            }
+
+            [Fact]
+            public void ReturnsCorrectValue_WhenTwoLengthsPassed()
+            {
+                string[] filePaths = new[] { @"C:\temp\nouns_02.txt", @"C:\temp\nouns_30.txt" };
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(filePaths);
+                this.fileProxyMock.ReadAllLines(filePaths[0]).Returns(new[] { "ab" });
+                this.fileProxyMock.ReadAllLines(filePaths[1]).Returns(Enumerable.Repeat("a", 30).ToArray());
+
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock,
+                    this.fileProxyMock,
+                    WordDirectoryPath,
+                    FileNameRegex);
+
+                textFileWordGenerator.LongestWordLength.Should().Be(30);
+            }
+        }
+
+        public class WordLengths
+        {
+            private readonly IDirectoryFacade directoryProxyMock;
+            private readonly IFileFacade fileProxyMock;
+
+            public WordLengths()
+            {
+                this.directoryProxyMock = Substitute.For<IDirectoryFacade>();
+                this.directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
+
+                this.fileProxyMock = Substitute.For<IFileFacade>();
+            }
+
+            [Fact]
+            public void ReturnsAllValues_WhenOneLengthPassed()
+            {
+                const string FilePath = @"C:\temp\nouns_01.txt";
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(new[] { FilePath });
+                this.fileProxyMock.ReadAllLines(FilePath).Returns(new[] { "a" });
+
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock,
+                    this.fileProxyMock,
+                    WordDirectoryPath,
+                    FileNameRegex);
+
+                textFileWordGenerator.WordLengths.Should().BeEquivalentTo(new int[] { 1 });
+            }
+
+            [Fact]
+            public void ReturnsCorrectValue_WhenTwoLengthsPassed()
+            {
+                string[] filePaths = new[] { @"C:\temp\nouns_02.txt", @"C:\temp\nouns_30.txt" };
+                this.directoryProxyMock.GetFiles(WordDirectoryPath).Returns(filePaths);
+                this.fileProxyMock.ReadAllLines(filePaths[0]).Returns(new[] { "ab" });
+                this.fileProxyMock.ReadAllLines(filePaths[1]).Returns(Enumerable.Repeat("a", 30).ToArray());
+
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock,
+                    this.fileProxyMock,
+                    WordDirectoryPath,
+                    FileNameRegex);
+
+                textFileWordGenerator.WordLengths.Should().BeEquivalentTo(new int[] { 2, 30 });
             }
         }
 
@@ -83,67 +257,79 @@
             [Fact]
             public void ReturnsSameWord_WhenSingleWordPassed_AndProperLengthPassed()
             {
-                const string word = "a";
+                const string Word = "a";
 
-                this.directoryProxyMock.GetFiles(Arg.Any<string>()).Returns(new[] {@"C:\temp\nouns_01.txt"});
-                this.fileProxyMock.ReadAllLines(Arg.Any<string>()).Returns(new[] {word});
+                this.directoryProxyMock.GetFiles(Arg.Any<string>()).Returns(new[] { @"C:\temp\nouns_01.txt" });
+                this.fileProxyMock.ReadAllLines(Arg.Any<string>()).Returns(new[] { Word });
 
-                var textFileWordGenerator = new TextFileWordGenerator(this.directoryProxyMock, this.fileProxyMock,
-                    WordDirectoryPath, FileNameRegex);
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock, 
+                    this.fileProxyMock,
+                    WordDirectoryPath, 
+                    FileNameRegex);
 
                 string result = textFileWordGenerator.GetRandomWord(1);
 
-                result.Should().Be(word);
+                result.Should().Be(Word);
             }
 
             [Fact]
             public void ReturnsWordLength1_WhenTwoWordsPassed_AndProperLengthPassed()
             {
-                const string word = "a";
+                const string Word = "a";
 
                 this.directoryProxyMock.GetFiles(Arg.Any<string>()).Returns(new[] { @"C:\temp\nouns_01.txt", @"C:\temp\nouns_02.txt" });
-                this.fileProxyMock.ReadAllLines(@"C:\temp\nouns_01.txt").Returns(new[] { word });
-                this.fileProxyMock.ReadAllLines(@"C:\temp\nouns_02.txt").Returns(new[] { word + word });
+                this.fileProxyMock.ReadAllLines(@"C:\temp\nouns_01.txt").Returns(new[] { Word });
+                this.fileProxyMock.ReadAllLines(@"C:\temp\nouns_02.txt").Returns(new[] { Word + Word });
 
-                var textFileWordGenerator = new TextFileWordGenerator(this.directoryProxyMock, this.fileProxyMock,
-                    WordDirectoryPath, FileNameRegex);
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock, 
+                    this.fileProxyMock,
+                    WordDirectoryPath, 
+                    FileNameRegex);
 
                 string result = textFileWordGenerator.GetRandomWord(1);
 
-                result.Should().Be(word);
+                result.Should().Be(Word);
             }
 
             [Fact]
             public void ReturnsWordLength2_WhenTwoWordsPassed_AndProperLengthPassed()
             {
-                const string word = "a";
+                const string Word = "a";
 
                 this.directoryProxyMock.GetFiles(Arg.Any<string>()).Returns(new[] { @"C:\temp\nouns_01.txt", @"C:\temp\nouns_02.txt" });
-                this.fileProxyMock.ReadAllLines(@"C:\temp\nouns_01.txt").Returns(new[] { word });
-                this.fileProxyMock.ReadAllLines(@"C:\temp\nouns_02.txt").Returns(new[] { word + word });
+                this.fileProxyMock.ReadAllLines(@"C:\temp\nouns_01.txt").Returns(new[] { Word });
+                this.fileProxyMock.ReadAllLines(@"C:\temp\nouns_02.txt").Returns(new[] { Word + Word });
 
-                var textFileWordGenerator = new TextFileWordGenerator(this.directoryProxyMock, this.fileProxyMock,
-                    WordDirectoryPath, FileNameRegex);
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock, 
+                    this.fileProxyMock,
+                    WordDirectoryPath, 
+                    FileNameRegex);
 
                 string result = textFileWordGenerator.GetRandomWord(2);
 
-                result.Should().Be(word + word);
+                result.Should().Be(Word + Word);
             }
 
             [Fact]
             public void ThrowsException_WhenSingleWordPassed_ButWrongLengthPassed()
             {
-                const string word = "a";
+                const string Word = "a";
 
                 this.directoryProxyMock.GetFiles(Arg.Any<string>()).Returns(new[] { @"C:\temp\nouns_01.txt" });
-                this.fileProxyMock.ReadAllLines(Arg.Any<string>()).Returns(new string[] { word });
+                this.fileProxyMock.ReadAllLines(Arg.Any<string>()).Returns(new string[] { Word });
 
-                var textFileWordGenerator = new TextFileWordGenerator(this.directoryProxyMock, this.fileProxyMock,
-                    WordDirectoryPath, FileNameRegex);
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock, 
+                    this.fileProxyMock,
+                    WordDirectoryPath, 
+                    FileNameRegex);
 
                 Action action = () => textFileWordGenerator.GetRandomWord(2);
 
-                action.ShouldThrow<ArgumentOutOfRangeException>();
+                action.Should().Throw<ArgumentOutOfRangeException>();
             }
         }
         
@@ -172,8 +358,11 @@
                 this.fileProxyMock.ReadAllLines(@"C:\temp\nouns_03.txt").Returns(words3.ToArray());
                 this.fileProxyMock.ReadAllLines(@"C:\temp\nouns_05.txt").Returns(words5.ToArray());
 
-                var textFileWordGenerator = new TextFileWordGenerator(this.directoryProxyMock, this.fileProxyMock,
-                    WordDirectoryPath, FileNameRegex);
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock, 
+                    this.fileProxyMock,
+                    WordDirectoryPath, 
+                    FileNameRegex);
 
                 int count = words1.Count + words3.Count + words5.Count;
                 var results = new HashSet<string>();
@@ -203,8 +392,11 @@
                 this.fileProxyMock.ReadAllLines(@"C:\temp\nouns_04.txt").Returns(words4.ToArray());
                 this.fileProxyMock.ReadAllLines(@"C:\temp\nouns_05.txt").Returns(words5.ToArray());
 
-                var textFileWordGenerator = new TextFileWordGenerator(this.directoryProxyMock, this.fileProxyMock,
-                    WordDirectoryPath, FileNameRegex);
+                var textFileWordGenerator = new TextFileWordGenerator(
+                    this.directoryProxyMock, 
+                    this.fileProxyMock,
+                    WordDirectoryPath, 
+                    FileNameRegex);
 
                 int count = words1.Count + words2.Count + words3.Count + words4.Count + words5.Count;
                 var results = new HashSet<string>();

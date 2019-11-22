@@ -13,6 +13,5 @@
         public static string NounFileNameTemplate => "nouns_{0:D2}.txt";
 
         public static string NounFileNameRegex => "nouns_(\\d+).txt";
-
     }
 }

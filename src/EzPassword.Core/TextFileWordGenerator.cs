@@ -2,14 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using Eks.Abstraction.System.IO;
+    using Kpax.Abstraction.System.IO;
 
     public class TextFileWordGenerator : IRandomWordGenerator
     {
-        private static readonly Random random = new Random();
+        private static readonly Random Random = new Random();
 
         private readonly Dictionary<int, string[]> wordFiles;
 
@@ -17,25 +18,29 @@
         {
             if (!directory.Exists(wordDirectoryPath))
             {
-                throw new ArgumentException(nameof(wordDirectoryPath));
+                throw new ArgumentException($"\"{nameof(wordDirectoryPath)}\" doesn't exist");
             }
 
             string[] files = directory.GetFiles(wordDirectoryPath);
+
+            if (files.Length == 0)
+            {
+                throw new ArgumentException("At least one file has to be available");
+            }
+
             this.wordFiles = files.ToDictionary(f => GetWordLength(f, fileNameRegex), file.ReadAllLines);
+
+            if (!this.wordFiles.Any() || this.wordFiles.Select(keyValuePair => keyValuePair.Value).All(words => !words.Any()))
+            {
+                throw new ArgumentException("No words were loaded");
+            }
         }
 
-        public string GetRandomWord()
-        {
-            var keys = this.wordFiles.Keys;
-            int randomIndex = random.Next(keys.Count);
+        public virtual int ShortestWordLength => this.wordFiles.Keys.Min();
 
-            return this.GetRandomWord(keys.ElementAt(randomIndex));
-        }
+        public virtual int LongestWordLength => this.wordFiles.Keys.Max();
 
-        public string GetRandomWord(int wordLength)
-        {
-            return GetRandomWord(this.wordFiles, wordLength);
-        }
+        public IEnumerable<int> WordLengths => this.wordFiles.Keys;
 
         public static string GetRandomWord(IDictionary<int, string[]> wordsByLength, int wordLength)
         {
@@ -45,9 +50,22 @@
             }
 
             string[] words = wordsByLength[wordLength];
-            int randomIndex = random.Next(words.Length);
+            int randomIndex = Random.Next(words.Length);
 
             return words[randomIndex];
+        }
+
+        public string GetRandomWord()
+        {
+            var keys = this.wordFiles.Keys;
+            int randomIndex = Random.Next(keys.Count);
+
+            return this.GetRandomWord(keys.ElementAt(randomIndex));
+        }
+
+        public string GetRandomWord(int wordLength)
+        {
+            return GetRandomWord(this.wordFiles, wordLength);
         }
 
         private static int GetWordLength(string fileName, string fileNameRegex)
@@ -55,7 +73,7 @@
             string fileNameWithoutExtension = Path.GetFileName(fileName);
             Match match = Regex.Match(fileNameWithoutExtension, fileNameRegex);
 
-            return int.Parse(match.Groups[1].Value);
+            return int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
         }
     }
 }

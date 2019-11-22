@@ -1,8 +1,9 @@
 ﻿namespace EzPassword.Core
 {
     using System;
+    using WikiClientLibrary.Pages;
 
-    public interface IWordPersister : IObserver<string>
+    public interface IWordPersister : IObserver<WikiPage>
     {
     }
 }
