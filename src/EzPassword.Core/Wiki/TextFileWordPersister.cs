@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using NLog;
     using WikiClientLibrary.Pages;
@@ -14,7 +15,7 @@
         private readonly string fileNameTemplate;
         private readonly IDictionary<int, StreamWriter> streamWriters;
 
-        private string lastFirstTwoLetters = String.Empty;
+        private string lastFirstTwoLetters = string.Empty;
 
         public TextFileWordPersister(string directoryPath, string fileNameTemplate)
         {
@@ -29,7 +30,7 @@
         {
             string value = page.Title;
             string firstTwoLetters = value.Substring(0, Math.Min(2, value.Length));
-            if (!String.Equals(this.lastFirstTwoLetters, firstTwoLetters, StringComparison.InvariantCultureIgnoreCase))
+            if (!string.Equals(this.lastFirstTwoLetters, firstTwoLetters, StringComparison.InvariantCultureIgnoreCase))
             {
                 this.lastFirstTwoLetters = firstTwoLetters;
                 Logger.Info(firstTwoLetters);
@@ -67,7 +68,7 @@
             if (!this.streamWriters.ContainsKey(wordLength))
             {
                 Logger.Debug($"Creating StreamWriter for length {wordLength}");
-                var fileName = string.Format($"{directoryPath}/{fileNameTemplate}", wordLength);
+                var fileName = string.Format(CultureInfo.CurrentCulture, $"{directoryPath}/{fileNameTemplate}", wordLength);
                 this.streamWriters[wordLength] = File.AppendText(fileName);
             }
 

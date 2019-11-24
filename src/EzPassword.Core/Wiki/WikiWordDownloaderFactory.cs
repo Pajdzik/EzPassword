@@ -7,23 +7,23 @@
     using WikiClientLibrary.Pages;
     using WikiClientLibrary.Sites;
 
-    public class WikiWordDownloaderFactory
+    public static class WikiWordDownloaderFactory
     {
-        public IObservable<WikiPage> CreateCategoryDownloader(WikiSite site, string categoryTitle)
+        public static IObservable<WikiPage> CreateCategoryDownloader(WikiSite site, string categoryTitle)
         {
             var page = new WikiPage(site, categoryTitle);
             var generator = new CategoryMembersGenerator(page);
             var observable = generator.EnumPagesAsync()
                 .Where((page, b) => !page.IsSpecialPage)
                 .ToObservable();
-            
+
             return observable;
         }
 
-        public (IObservable<WikiPage>, IObservable<WikiPage>) CreateLanguageDownloaders(WikiSite site, Language language)
+        public static (IObservable<WikiPage>, IObservable<WikiPage>) CreateLanguageDownloaders(WikiSite site, Language language)
         {
-            var adjectiveDownloader = this.CreateCategoryDownloader(site, language.AdjectiveCategoryTitle);
-            var nounDownloader = this.CreateCategoryDownloader(site, language.NounCategoryTitle);
+            var adjectiveDownloader = CreateCategoryDownloader(site, language.AdjectiveCategoryTitle);
+            var nounDownloader = CreateCategoryDownloader(site, language.NounCategoryTitle);
 
             return (adjectiveDownloader, nounDownloader);
         }

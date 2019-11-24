@@ -16,8 +16,8 @@
 
         public override string ToString()
         {
-            IEnumerable<string> parts = this.PasswordParts.Select(part => String.Join(String.Empty, part.Content));
-            return String.Join(String.Empty, parts);
+            IEnumerable<string> parts = this.PasswordParts.Select(part => string.Join(string.Empty, part.Content));
+            return string.Join(string.Empty, parts);
         }
     }
 }

@@ -29,10 +29,10 @@
 
             var otherLanguage = (Language)obj;
 
-            return this.Symbol.Equals(otherLanguage.Symbol)
+            return this.Symbol.Equals(otherLanguage.Symbol, StringComparison.InvariantCultureIgnoreCase)
                 && this.WikiApi.Equals(otherLanguage.WikiApi)
-                && this.AdjectiveCategoryTitle.Equals(otherLanguage.AdjectiveCategoryTitle)
-                && this.NounCategoryTitle.Equals(otherLanguage.NounCategoryTitle);
+                && this.AdjectiveCategoryTitle.Equals(otherLanguage.AdjectiveCategoryTitle, StringComparison.InvariantCultureIgnoreCase)
+                && this.NounCategoryTitle.Equals(otherLanguage.NounCategoryTitle, StringComparison.InvariantCultureIgnoreCase);
         }
 
         public override int GetHashCode()
@@ -40,10 +40,10 @@
             unchecked
             {
                 int hash = 911;
-                hash = hash * 29 + this.Symbol.GetHashCode();
-                hash = hash * 29 + this.WikiApi.GetHashCode();
-                hash = hash * 29 + this.AdjectiveCategoryTitle.GetHashCode();
-                hash = hash * 29 + this.NounCategoryTitle.GetHashCode();
+                hash = (hash * 29) + this.Symbol.GetHashCode(StringComparison.InvariantCultureIgnoreCase);
+                hash = (hash * 29) + this.WikiApi.GetHashCode();
+                hash = (hash * 29) + this.AdjectiveCategoryTitle.GetHashCode(StringComparison.InvariantCultureIgnoreCase);
+                hash = (hash * 29) + this.NounCategoryTitle.GetHashCode(StringComparison.InvariantCultureIgnoreCase);
                 return hash;
             }
         }
