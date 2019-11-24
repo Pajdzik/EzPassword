@@ -58,10 +58,10 @@
             foreach (int length in nounGenerator.WordLengths)
             {
                 operatorsByLength.Add(
-                    length, 
+                    length,
                     new List<PasswordGeneratingChain>
                     {
-                        new PasswordGeneratingChain(() => nounGenerator.GetRandomWord(length))
+                        new PasswordGeneratingChain(() => nounGenerator.GetRandomWord(length)),
                     });
             }
         }
