@@ -1,5 +1,6 @@
 ﻿namespace EzPassword.WordDownloader
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -24,7 +25,8 @@
                 {
                     IDictionary<string, Language> wikiConfig = ReadWikiConfig();
                     Language language = wikiConfig[options.LanguageSymbol!];
-                    await RunTasks(language, options.OutDirectory!).ConfigureAwait(true);
+                    string outDirectory = Path.Join(options.OutDirectory, language.Symbol);
+                    await RunTasks(language, outDirectory).ConfigureAwait(true);
                 },
                 (_) => Task.CompletedTask)
                 .ConfigureAwait(true);
@@ -34,7 +36,7 @@
         {
             using var client = new WikiClient
             {
-                ClientUserAgent = "https://github.com/Pajdziu/EzPassword",
+                ClientUserAgent = Uri.EscapeDataString("github.com/Pajdziu/EzPassword"),
             };
 
             var site = new WikiSite(client, language.WikiApi.ToString());
