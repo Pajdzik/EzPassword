@@ -16,42 +16,6 @@
         public class Ctor
         {
             [Fact]
-            public void ThrowsException_WhenNullDirectoryProxyPassed()
-            {
-                var fileProxyMock = Substitute.For<IFileFacade>();
-                Action construct = () => new TextFileWordGenerator(null, fileProxyMock, @"C:\temp", "template.txt");
-                construct.Should().Throw<ArgumentException>();
-            }
-
-            [Fact]
-            public void ThrowsException_WhenNullAdjectiveDirectoryPathPassedAsync()
-            {
-                var directoryProxyMock = Substitute.For<IDirectoryFacade>();
-                var fileProxyMock = Substitute.For<IFileFacade>();
-                Action construct = () => new TextFileWordGenerator(directoryProxyMock, fileProxyMock, null, "template.txt");
-                construct.Should().Throw<ArgumentException>();
-            }
-
-            [Fact]
-            public void ThrowsException_WhenNullTemplatePassed()
-            {
-                var directoryProxyMock = Substitute.For<IDirectoryFacade>();
-                var fileProxyMock = Substitute.For<IFileFacade>();
-                Action construct = () =>
-                    new TextFileWordGenerator(directoryProxyMock, fileProxyMock, @"C:\temp", null);
-                construct.Should().Throw<ArgumentNullException>();
-            }
-
-            [Fact]
-            public void ThrowsException_WhenNullFileFacadePassed()
-            {
-                var fileProxyMock = Substitute.For<IFileFacade>();
-                Action construct = () =>
-                    new TextFileWordGenerator(null, fileProxyMock, @"C:\temp", "template.txt");
-                construct.Should().Throw<ArgumentNullException>();
-            }
-
-            [Fact]
             public void ThrowsException_WhenDirectoryDoesntExist()
             {
                 const string WordDirectoryPath = @"C:\temp";

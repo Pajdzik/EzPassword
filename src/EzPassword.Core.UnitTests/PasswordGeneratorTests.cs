@@ -7,25 +7,6 @@
 
     public sealed class PasswordGeneratorTests
     {
-        public class Ctor
-        {
-            [Fact]
-            public void ThrowsException_WhenNullAdjectiveGeneratorPassed()
-            {
-                var nounGenerator = Substitute.For<IRandomWordGenerator>();
-                Action contruct = () => new PasswordGenerator(null, nounGenerator);
-                contruct.Should().Throw<ArgumentNullException>();
-            }
-
-            [Fact]
-            public void ThrowsException_WhenNullNounGeneratorPassed()
-            {
-                var adjectiveGenerator = Substitute.For<IRandomWordGenerator>();
-                Action contruct = () => new PasswordGenerator(adjectiveGenerator, null);
-                contruct.Should().Throw<ArgumentNullException>();
-            }
-        }
-
         public class ShortestPasswordLength
         {
             [Fact]
@@ -90,22 +71,6 @@
 
         public class CalculateAvailableLengths
         {
-            [Fact]
-            public void ThrowsException_WhenAdjectiveNounGeneratorPassed()
-            {
-                var nounGenerator = Substitute.For<IRandomWordGenerator>();
-                Action calculate = () => PasswordGenerator.CalculateAvailableLengths(null, nounGenerator);
-                calculate.Should().Throw<ArgumentNullException>();
-            }
-
-            [Fact]
-            public void ThrowsException_WhenNullNounGeneratorPassed()
-            {
-                var adjectiveGenerator = Substitute.For<IRandomWordGenerator>();
-                Action calculate = () => PasswordGenerator.CalculateAvailableLengths(adjectiveGenerator, null);
-                calculate.Should().Throw<ArgumentNullException>();
-            }
-
             [Fact]
             public void ForSingleNounGenerator_OneChainIsGenerated()
             {

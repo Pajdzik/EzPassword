@@ -8,16 +8,6 @@
 
     public sealed class PasswordGeneratingChainTests
     {
-        public class Ctor
-        {
-            [Fact]
-            public void ThrowsException_WhenNullCollectionPassed()
-            {
-                Action construct = () => new PasswordGeneratingChain(null);
-                construct.Should().Throw<ArgumentNullException>();
-            }
-        }
-
         public class Generate
         {
             [Theory]

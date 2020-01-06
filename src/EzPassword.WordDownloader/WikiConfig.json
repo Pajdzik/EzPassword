@@ -8,7 +8,7 @@
     {
         "symbol": "en",
         "wikiApi": "https://en.wiktionary.org/w/api.php",
-        "adjectiveCategoryTitle": "Kategoria:Język polski - przymiotniki",
-        "nounCategoryTitle": "Kategoria:Język polski - rzeczowniki"
+        "adjectiveCategoryTitle": "Category:English adjectives",
+        "nounCategoryTitle": "Category:English nouns"
     }
 ]
