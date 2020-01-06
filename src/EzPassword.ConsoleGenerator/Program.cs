@@ -14,7 +14,7 @@
         {
             ParserResult<CommandLineOptions> parserResult = Parser.Default.ParseArguments<CommandLineOptions>(args);
             await parserResult.MapResult(
-                async options =>
+                options =>
                 {
                     var adjectiveGenerator = new TextFileWordGenerator(
                         new DirectoryFacade(),
@@ -31,10 +31,13 @@
                     var generator = new PasswordGenerator(adjectiveGenerator, nounGenerator);
 
                     int numberOfGeneratedPasswords = options.PasswordCount;
-                    while (numberOfGeneratedPasswords-- > 0) { 
+                    while (numberOfGeneratedPasswords-- > 0)
+                    { 
                         var password = generator.Generate(options.PasswordLength);
                         Console.WriteLine(password);
                     }
+
+                    return Task.CompletedTask;
                 },
                 (_) => Task.CompletedTask)
                 .ConfigureAwait(true);
