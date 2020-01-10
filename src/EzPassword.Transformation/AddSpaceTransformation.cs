@@ -15,11 +15,15 @@ namespace EzPassword.Transformation
                 return password;
             }
 
-            var partsWithSpaces = new List<PasswordPart>(new [] { firstPart });
+            var partsWithSpaces = new List<PasswordPart>(new[] { firstPart });
 
             foreach (PasswordPart part in password.PasswordParts.Skip(1))
             {
-                partsWithSpaces.Add(new Symbol(" "));
+                if (part is Word)
+                {
+                    partsWithSpaces.Add(new Symbol(" "));
+                }
+                
                 partsWithSpaces.Add(part);
             }
 
