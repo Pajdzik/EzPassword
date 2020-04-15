@@ -1,8 +1,13 @@
 ﻿namespace EzPassword.Core.Parts
 {
-    internal class Word : PasswordPart
+    public class Word : PasswordPart
     {
         public Word(char[] content)
+            : base(content)
+        {
+        }
+
+        public Word(string content)
             : base(content)
         {
         }
