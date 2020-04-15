@@ -15,8 +15,6 @@ namespace EzPassword.Transformation.UnitTests
             [Fact]
             public void Foo()
             {
-                var upperCase = new UpperCaseTransformation();
-                upperCase.Transform()
             }
         }
     }
