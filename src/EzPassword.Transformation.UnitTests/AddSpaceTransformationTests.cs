@@ -1,6 +1,5 @@
 namespace EzPassword.Transformation.UnitTests
 {
-    using System.Collections.Generic;
     using System.Linq;
     using EzPassword.Core;
     using EzPassword.Core.Parts;
@@ -8,26 +7,22 @@ namespace EzPassword.Transformation.UnitTests
     using FluentAssertions;
     using Xunit;
 
-    public class AddSpaceTransformationTests
+    public class AddSpaceTransformationTests : TransformationTests
     {
-        public class Transformation
+        public class Transform 
         {
-            private static Password Transform(Password password)
-            {
-                var transformation = new AddSpaceTransformation();
-                return transformation.Transform(password);
-            }
+            private AddSpaceTransformation addSpaceTransformation;
 
-            private static IEnumerable<PasswordPart> GetPasswordParts(params string[] parts)
+            public Transform()
             {
-                return parts.Select(part => new Word(part));
+                this.addSpaceTransformation = new AddSpaceTransformation();
             }
-
+            
             [Fact]
             public void WhenEmptyPasswordPassed_EmptyPasswordReturned()
             {
                 var emptyPassword = new Password(Enumerable.Empty<PasswordPart>());
-                var resultPassword = Transform(emptyPassword);
+                var resultPassword = this.addSpaceTransformation.Transform(emptyPassword);
 
                 resultPassword.PasswordParts.Should().BeEmpty();
             }
@@ -37,7 +32,7 @@ namespace EzPassword.Transformation.UnitTests
             {
                 var parts = GetPasswordParts("abc");
                 var password = new Password(parts);
-                var resultPassword = Transform(password);
+                var resultPassword = this.addSpaceTransformation.Transform(password);
 
                 resultPassword.PasswordParts.Should().ContainSingle(part => part.ToString().Equals("abc"));
             }
@@ -47,7 +42,7 @@ namespace EzPassword.Transformation.UnitTests
             {
                 var parts = GetPasswordParts("abc", "def");
                 var password = new Password(parts);
-                var resultPassword = Transform(password);
+                var resultPassword = this.addSpaceTransformation.Transform(password);
 
                 resultPassword.PasswordParts.Should().HaveCount(3);
                 resultPassword.ToString().Should().Be("abc def");
@@ -58,7 +53,7 @@ namespace EzPassword.Transformation.UnitTests
             {
                 var parts = new[] { "abc", "#$!" }.Select(part => new Symbol(part));
                 var password = new Password(parts);
-                var resultPassword = Transform(password);
+                var resultPassword = this.addSpaceTransformation.Transform(password);
 
                 resultPassword.PasswordParts.Should().HaveCount(2);
                 resultPassword.ToString().Should().Be("abc#$!");
@@ -73,7 +68,7 @@ namespace EzPassword.Transformation.UnitTests
             {
                 var parts = GetPasswordParts(stringParts);
                 var password = new Password(parts);
-                var resultPassword = Transform(password);
+                var resultPassword = this.addSpaceTransformation.Transform(password);
 
                 resultPassword.PasswordParts.Should().HaveCount((stringParts.Length * 2) - 1);
                 resultPassword.ToString().Should().Be(expectedPassword);
