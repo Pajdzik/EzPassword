@@ -5,9 +5,10 @@ namespace EzPassword.Transformation
 
     public class UpperCaseTransformation : ChangeCaseTransformation
     {
-        protected override void ChangeCase(Word word)
+        protected override PasswordPart ChangeCase(Word word)
         {
             word.Content[0] = Char.ToUpperInvariant(word.Content[0]);
+            return word;
         }
     }
 }
