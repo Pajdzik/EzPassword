@@ -4,11 +4,11 @@ namespace EzPassword.Transformation
     using System.Linq;
     using EzPassword.Core.Parts;
 
-    public class UpperCaseTransformation : ChangeCaseTransformation
+    public class LowerCaseTransformation : ChangeCaseTransformation
     {
         protected override PasswordPart ChangeCase(Word word)
         {
-            return new Word(word.Content.Select(c => Char.ToUpperInvariant(c)).ToArray());
+            return new Word(word.Content.Select(c => Char.ToLowerInvariant(c)).ToArray());
         }
     }
 }
