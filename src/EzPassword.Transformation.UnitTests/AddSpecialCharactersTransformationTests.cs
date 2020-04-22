@@ -71,7 +71,6 @@ namespace EzPassword.Transformation.UnitTests
                 var password = new Password(parts);
                 var resultPassword = this.addSpecialCharactersTransformation.Transform(password);
 
-                System.Console.WriteLine("D1: "+ resultPassword.ToString());
                 resultPassword.PasswordParts.Should().HaveCount((stringParts.Length * 2) - 1);
                 Regex.IsMatch(resultPassword.ToString(), expectedPattern).Should().BeTrue();
             }
