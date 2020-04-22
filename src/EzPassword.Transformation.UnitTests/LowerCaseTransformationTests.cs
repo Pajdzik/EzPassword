@@ -6,22 +6,22 @@ namespace EzPassword.Transformation.UnitTests
     using FluentAssertions;
     using Xunit;
 
-    public class UpperCaseTransformationTests
+    public class LowerCaseTransformationTests
     {
         public class Transform : TransformationTests
         {
-            private UpperCaseTransformation upperCaseTransformation;
+            private LowerCaseTransformation lowerCaseTransformation;
 
             public Transform()
             {
-                this.upperCaseTransformation = new UpperCaseTransformation();
+                this.lowerCaseTransformation = new LowerCaseTransformation();
             }
 
             [Fact]
             public void WhenEmptyPasswordPassed_EmptyPasswordReturned()
             {
                 var emptyPassword = new Password(Enumerable.Empty<PasswordPart>());
-                var resultPassword = this.upperCaseTransformation.Transform(emptyPassword);
+                var resultPassword = this.lowerCaseTransformation.Transform(emptyPassword);
 
                 resultPassword.PasswordParts.Should().BeEmpty();
             }
@@ -29,23 +29,23 @@ namespace EzPassword.Transformation.UnitTests
             [Fact]
             public void WhenOnePartPassed_FirstLetterIsChangedToUpperCase()
             {
-                var parts = GetPasswordParts("abc");
+                var parts = GetPasswordParts("Abc");
                 var password = new Password(parts);
-                var resultPassword = this.upperCaseTransformation.Transform(password);
+                var resultPassword = this.lowerCaseTransformation.Transform(password);
 
-                resultPassword.PasswordParts.Should().ContainSingle(part => part.ToString().Equals("ABC"));
+                resultPassword.PasswordParts.Should().ContainSingle(part => part.ToString().Equals("abc"));
             }
 
             [Theory]
-            [InlineData("ABCDEFXYZ", "abc", "def", "xyz")]
-            [InlineData("ABCDEFXYZ", "Abc", "Def", "Xyz")]
-            [InlineData("ABC$#!XYZ", "Abc", "$#!", "XYZ")]
-            [InlineData("ABCDEF", "a", "b", "c", "d", "e", "f")]
+            [InlineData("abcdefxyz", "abc", "def", "xyz")]
+            [InlineData("abcdefxyz", "Abc", "Def", "Xyz")]
+            [InlineData("abc$#!xyz", "aBC", "$#!", "xYz")]
+            [InlineData("abcdef", "A", "B", "C", "D", "E", "F")]
             public void WhenMultiplePartsPassed_EveryWordIsCapitalized(string expectedPassword, params string[] stringParts)
             {
                 var parts = GetPasswordParts(stringParts);
                 var password = new Password(parts);
-                var resultPassword = this.upperCaseTransformation.Transform(password);
+                var resultPassword = this.lowerCaseTransformation.Transform(password);
 
                 resultPassword.PasswordParts.Should().HaveCount(stringParts.Length);
                 resultPassword.ToString().Should().Be(expectedPassword);
