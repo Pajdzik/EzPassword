@@ -295,3 +295,7 @@ __pycache__/
 *.xsd.cs
 
 .DS_Store
+
+src/coverage.json
+
+src/coverage.opencover.xml
