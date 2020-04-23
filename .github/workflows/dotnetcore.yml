@@ -16,4 +16,4 @@ jobs:
     - name: Build with dotnet
       run: dotnet build src --configuration Release
     - name: Test
-      run: dotnet test src
+      run: dotnet test src /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
