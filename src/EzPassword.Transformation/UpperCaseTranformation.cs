@@ -6,6 +6,8 @@ namespace EzPassword.Transformation
 
     public class UpperCaseTransformation : ChangeCaseTransformation
     {
+        public override string Keyword { get; } = "upper";
+
         protected override PasswordPart ChangeCase(Word word)
         {
             return new Word(word.Content.Select(c => Char.ToUpperInvariant(c)).ToArray());

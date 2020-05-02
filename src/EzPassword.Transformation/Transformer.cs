@@ -5,6 +5,8 @@ namespace EzPassword.Transformation
 
     public class Transformer : ITransformation
     {
+        public string Keyword { get; } = "transformer";
+
         private ICollection<ITransformation> transformations;
 
         public Transformer(ICollection<ITransformation> transformations)

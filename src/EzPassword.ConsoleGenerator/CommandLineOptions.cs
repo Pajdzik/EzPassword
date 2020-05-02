@@ -1,5 +1,6 @@
 ﻿namespace EzPassword.ConsoleGenerator
 {
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using CommandLine;
 
@@ -14,5 +15,18 @@
 
         [Option('w', "words", Required = true, HelpText = "Path to the directory with words to generate passwords from")]
         public string? WordsDirectory { get; set; }
+
+        [
+            Option('t', "transformations", Required = false,
+            HelpText = "List of password transformations.\n"
+                     + "  Available:\n"
+                     + "    * space - adds space between words\n"
+                     + "    * special - adds special characters between words\n"
+                     + "    * camel - converts words to camel case\n"
+                     + "    * upper - converts words to upper case\n"
+                     + "    * lower - converts words to lower case\n"
+                     + "    * l33t - converts words to l33t speak"
+        )]
+        public IEnumerable<string> Transformations { get; set; } = new List<string>(0);
     }
 }

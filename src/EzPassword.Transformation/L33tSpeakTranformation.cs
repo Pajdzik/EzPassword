@@ -18,6 +18,8 @@ namespace EzPassword.Transformation
             { 't', '7' },
         };
 
+        public string Keyword { get; } = "l33t";
+
         public Password Transform(Password password)
         {
             var transformedParts = 

@@ -5,6 +5,8 @@ namespace EzPassword.Transformation
 
     public class AddSpecialCharactersTransformation : AddCharactersTransformation
     {
+        public override string Keyword { get; } = "special";
+
         private static Random Random = new Random();
 
         private static string[] SpecialCharacters = { 

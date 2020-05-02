@@ -4,6 +4,8 @@ namespace EzPassword.Transformation
 
     public class AddSpaceTransformation : AddCharactersTransformation
     {
+        public override string Keyword { get; } = "space";
+
         protected override Symbol GetSymbol()
         {
             return new Symbol(" ");
