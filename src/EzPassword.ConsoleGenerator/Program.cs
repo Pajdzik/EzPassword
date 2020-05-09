@@ -6,6 +6,7 @@
     using CommandLine;
     using EzPassword.Core;
     using EzPassword.Core.Config;
+    using EzPassword.Transformation;
     using Kpax.Abstraction.System.IO;
 
     public class Program
@@ -28,13 +29,16 @@
                         Path.Join(options.WordsDirectory, WordDirectoryConfig.NounDirectoryName),
                         WordDirectoryConfig.NounFileNameRegex);
 
+                    var transformer = TransformerFactory.CreateFromKeywords(options.Transformations);
+
                     var generator = new PasswordGenerator(adjectiveGenerator, nounGenerator);
 
                     int numberOfGeneratedPasswords = options.PasswordCount;
                     while (numberOfGeneratedPasswords-- > 0)
                     { 
                         var password = generator.Generate(options.PasswordLength);
-                        Console.WriteLine(password);
+                        var transformedPassword = transformer.Transform(password);
+                        Console.WriteLine(transformedPassword + " (Original: \"" + password + "\")");
                     }
 
                     return Task.CompletedTask;

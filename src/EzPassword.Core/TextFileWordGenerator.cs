@@ -28,7 +28,9 @@
                 throw new ArgumentException("At least one file has to be available");
             }
 
-            this.wordFiles = files.ToDictionary(f => GetWordLength(f, fileNameRegex), file.ReadAllLines);
+            this.wordFiles = files
+                .Where(f => file.IsFile(f))
+                .ToDictionary(f => GetWordLength(f, fileNameRegex), file.ReadAllLines);
 
             if (!this.wordFiles.Any() || this.wordFiles.Select(keyValuePair => keyValuePair.Value).All(words => !words.Any()))
             {

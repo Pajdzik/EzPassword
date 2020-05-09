@@ -16,12 +16,14 @@ namespace EzPassword.Transformation
 
         public Password Transform(Password password)
         {
+            Password transformedPassport = new Password(password);
+
             foreach (ITransformation transformation in this.transformations)
             {
-                password = transformation.Transform(password);
+                transformedPassport = transformation.Transform(transformedPassport);
             }
 
-            return password;
+            return transformedPassport;
         }
     }
 }
