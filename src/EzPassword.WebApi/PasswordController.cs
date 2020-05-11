@@ -1,9 +1,5 @@
 ﻿namespace EzPassword.WebApi.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
@@ -19,9 +15,9 @@
         }
 
         [HttpGet]
-        public string Get(PasswordParameters parameters)
+        public string Get([FromQuery] PasswordParameters parameters)
         {
-            return "Working" + parameters.PasswordCount;
+            return "Working" + parameters.ToString();
         }
     }
 }

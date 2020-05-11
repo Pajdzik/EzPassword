@@ -5,11 +5,11 @@ namespace EzPassword.WebApi
     
     public class PasswordParameters : IPasswordParameters
     {
-        public int PasswordCount { get; }
+        public int PasswordCount { get; set; }
 
-        public int PasswordLength { get; }
+        public int PasswordLength { get; set; }
 
-        public string? WordsDirectory { get; }
+        public string WordsDirectory { get; }
     
         public IEnumerable<string> Transformations { get; }
     }
