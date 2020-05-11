@@ -75,6 +75,7 @@
                 this.directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
 
                 this.fileProxyMock = Substitute.For<IFileFacade>();
+                this.fileProxyMock.IsFile(default).ReturnsForAnyArgs(true);
             }
 
             [Fact]
@@ -122,6 +123,7 @@
                 this.directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
 
                 this.fileProxyMock = Substitute.For<IFileFacade>();
+                this.fileProxyMock.IsFile(default).ReturnsForAnyArgs(true);
             }
 
             [Fact]
@@ -169,6 +171,7 @@
                 this.directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
 
                 this.fileProxyMock = Substitute.For<IFileFacade>();
+                this.fileProxyMock.IsFile(default).ReturnsForAnyArgs(true);
             }
 
             [Fact]
@@ -216,6 +219,7 @@
                 this.directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
 
                 this.fileProxyMock = Substitute.For<IFileFacade>();
+                this.fileProxyMock.IsFile(default).ReturnsForAnyArgs(true);
             }
 
             [Fact]
@@ -308,6 +312,7 @@
                 this.directoryProxyMock.Exists(WordDirectoryPath).Returns(true);
 
                 this.fileProxyMock = Substitute.For<IFileFacade>();
+                this.fileProxyMock.IsFile(default).ReturnsForAnyArgs(true);
             }
 
             [Fact]
