@@ -3,9 +3,10 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using CommandLine;
+    using EzPassword.Core;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Used by reflection")]
-    internal class CommandLineOptions
+    internal class CommandLineOptions : IPasswordParameters
     {
         [Option('c', "count", Required = true, HelpText = "How many passwords to generate [default: 5]")]
         public int PasswordCount { get; set; } = 5;

@@ -19,9 +19,9 @@
         }
 
         [HttpGet]
-        public string Get()
+        public string Get(PasswordParameters parameters)
         {
-            return "Working";
+            return "Working" + parameters.PasswordCount;
         }
     }
 }
