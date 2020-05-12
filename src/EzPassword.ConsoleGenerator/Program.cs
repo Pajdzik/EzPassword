@@ -17,21 +17,14 @@
             await parserResult.MapResult(
                 options =>
                 {
-                    var adjectiveGenerator = new TextFileWordGenerator(
-                        new DirectoryFacade(),
-                        new FileFacade(),
-                        Path.Join(options.WordsDirectory, WordDirectoryConfig.AdjectiveDirectoryName),
-                        WordDirectoryConfig.AdjectiveFileNameRegex);
-
-                    var nounGenerator = new TextFileWordGenerator(
-                        new DirectoryFacade(),
-                        new FileFacade(),
-                        Path.Join(options.WordsDirectory, WordDirectoryConfig.NounDirectoryName),
-                        WordDirectoryConfig.NounFileNameRegex);
-
                     var transformer = TransformerFactory.CreateFromKeywords(options.Transformations);
 
-                    var generator = new PasswordGenerator(adjectiveGenerator, nounGenerator);
+                    var generator = PasswordGeneratorFactory.Create(
+                        Path.Join(options.WordsDirectory, WordDirectoryConfig.AdjectiveDirectoryName),
+                        Path.Join(options.WordsDirectory, WordDirectoryConfig.NounDirectoryName),
+                        WordDirectoryConfig.AdjectiveFileNameRegex,
+                        WordDirectoryConfig.NounFileNameRegex
+                    );
 
                     int numberOfGeneratedPasswords = options.PasswordCount;
                     while (numberOfGeneratedPasswords-- > 0)
