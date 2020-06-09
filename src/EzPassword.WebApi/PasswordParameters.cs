@@ -8,9 +8,12 @@ namespace EzPassword.WebApi
         public int PasswordCount { get; set; }
 
         public int PasswordLength { get; set; }
-
-        public string WordsDirectory { get; }
     
         public IEnumerable<string> Transformations { get; }
+
+        public override string ToString()
+        {
+            return $"{{ PasswordCount: {this.PasswordCount}; PasswordLength: {this.PasswordLength}; }}";
+        }
     }
 }

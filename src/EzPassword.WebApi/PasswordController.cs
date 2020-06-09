@@ -1,5 +1,6 @@
 ﻿namespace EzPassword.WebApi.Controllers
 {
+    using EzPassword.Core;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
@@ -17,7 +18,13 @@
         [HttpGet]
         public string Get([FromQuery] PasswordParameters parameters)
         {
-            return "Working" + parameters.ToString();
+            PasswordGenerator generator = PasswordGeneratorFactory.Create(
+                "/Users/pajdziu/Repos/wiki/pl/adjectives",
+                "/Users/pajdziu/Repos/wiki/pl/nouns",
+                "adjectives_(\\d+).txt",
+                "nouns_(\\d+).txt");
+
+            return generator.Generate(parameters.PasswordLength).ToString();
         }
     }
 }

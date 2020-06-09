@@ -8,8 +8,6 @@
 
         int PasswordLength { get; }
 
-        string? WordsDirectory { get; }
-
         IEnumerable<string> Transformations { get; }
     }
 }
