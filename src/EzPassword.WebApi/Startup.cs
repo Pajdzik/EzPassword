@@ -1,5 +1,7 @@
 namespace EzPassword.WebApi
 {
+    using System.IO;
+    using System.Reflection;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -10,7 +12,11 @@ namespace EzPassword.WebApi
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
+
+            string dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string wordsRootPath = Path.Combine(dllPath, configuration["WordsDirectory"]);
+            this.Configuration["AbsoluteWordsDirectory"] = wordsRootPath;
         }
 
         public IConfiguration Configuration { get; }

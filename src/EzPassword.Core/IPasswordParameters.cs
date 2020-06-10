@@ -4,6 +4,8 @@
 
     public interface IPasswordParameters
     {
+        string Language { get; }
+
         int PasswordCount { get; }
 
         int PasswordLength { get; }

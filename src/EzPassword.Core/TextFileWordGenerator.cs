@@ -18,7 +18,7 @@
         {
             if (!directory.Exists(wordDirectoryPath))
             {
-                throw new ArgumentException($"\"{nameof(wordDirectoryPath)}\" doesn't exist");
+                throw new ArgumentException($"\"{nameof(wordDirectoryPath)}\" doesn't exist: {wordDirectoryPath}");
             }
 
             string[] files = directory.GetFiles(wordDirectoryPath);

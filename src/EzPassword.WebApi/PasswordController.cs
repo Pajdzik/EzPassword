@@ -1,26 +1,36 @@
 ﻿namespace EzPassword.WebApi.Controllers
 {
+    using System.IO;
     using EzPassword.Core;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
     [ApiController]
     [Route("[controller]")]
     public class PasswordController : ControllerBase
     {
-        private readonly ILogger<PasswordController> _logger;
+        private readonly IConfiguration configuration;
 
-        public PasswordController(ILogger<PasswordController> logger)
+        private readonly ILogger<PasswordController> logger;
+
+        private readonly string wordsDirectory;
+
+        public PasswordController(IConfiguration configuration, ILogger<PasswordController> logger)
         {
-            _logger = logger;
+            this.configuration = configuration;
+            this.logger = logger;
+            this.wordsDirectory = configuration["AbsoluteWordsDirectory"];
         }
 
         [HttpGet]
         public string Get([FromQuery] PasswordParameters parameters)
         {
+            this.logger.LogInformation($"Incoming request with parameters: {parameters}");
+
             PasswordGenerator generator = PasswordGeneratorFactory.Create(
-                "/Users/pajdziu/Repos/wiki/pl/adjectives",
-                "/Users/pajdziu/Repos/wiki/pl/nouns",
+                Path.Combine(this.wordsDirectory, parameters.Language, "adjectives"),
+                Path.Combine(this.wordsDirectory, parameters.Language, "nouns"),
                 "adjectives_(\\d+).txt",
                 "nouns_(\\d+).txt");
 
