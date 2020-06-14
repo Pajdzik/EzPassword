@@ -76,6 +76,10 @@
 
                 this.fileProxyMock = Substitute.For<IFileFacade>();
                 this.fileProxyMock.IsFile(default).ReturnsForAnyArgs(true);
+
+                var fileInfoMock = Substitute.For<IFileInfo>();
+                fileInfoMock.Length.Returns(5);
+                this.fileProxyMock.GetFileInfo(Arg.Any<string>()).Returns(fileInfoMock);
             }
 
             [Fact]
@@ -124,6 +128,10 @@
 
                 this.fileProxyMock = Substitute.For<IFileFacade>();
                 this.fileProxyMock.IsFile(default).ReturnsForAnyArgs(true);
+
+                var fileInfoMock = Substitute.For<IFileInfo>();
+                fileInfoMock.Length.Returns(5);
+                this.fileProxyMock.GetFileInfo(Arg.Any<string>()).Returns(fileInfoMock);
             }
 
             [Fact]
@@ -172,6 +180,10 @@
 
                 this.fileProxyMock = Substitute.For<IFileFacade>();
                 this.fileProxyMock.IsFile(default).ReturnsForAnyArgs(true);
+
+                var fileInfoMock = Substitute.For<IFileInfo>();
+                fileInfoMock.Length.Returns(5);
+                this.fileProxyMock.GetFileInfo(Arg.Any<string>()).Returns(fileInfoMock);
             }
 
             [Fact]
@@ -220,6 +232,10 @@
 
                 this.fileProxyMock = Substitute.For<IFileFacade>();
                 this.fileProxyMock.IsFile(default).ReturnsForAnyArgs(true);
+
+                var fileInfoMock = Substitute.For<IFileInfo>();
+                fileInfoMock.Length.Returns(5);
+                this.fileProxyMock.GetFileInfo(Arg.Any<string>()).Returns(fileInfoMock);
             }
 
             [Fact]
@@ -313,6 +329,10 @@
 
                 this.fileProxyMock = Substitute.For<IFileFacade>();
                 this.fileProxyMock.IsFile(default).ReturnsForAnyArgs(true);
+
+                var fileInfoMock = Substitute.For<IFileInfo>();
+                fileInfoMock.Length.Returns(5);
+                this.fileProxyMock.GetFileInfo(Arg.Any<string>()).Returns(fileInfoMock);
             }
 
             [Fact]
