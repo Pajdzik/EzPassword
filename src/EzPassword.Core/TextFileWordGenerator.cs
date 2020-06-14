@@ -18,7 +18,7 @@
         {
             if (!directory.Exists(wordDirectoryPath))
             {
-                throw new ArgumentException($"\"{nameof(wordDirectoryPath)}\" doesn't exist");
+                throw new ArgumentException($"\"{nameof(wordDirectoryPath)}\" doesn't exist: {wordDirectoryPath}");
             }
 
             string[] files = directory.GetFiles(wordDirectoryPath);
@@ -28,7 +28,10 @@
                 throw new ArgumentException("At least one file has to be available");
             }
 
-            this.wordFiles = files.ToDictionary(f => GetWordLength(f, fileNameRegex), file.ReadAllLines);
+            this.wordFiles = files
+                .Where(f => file.IsFile(f))
+                .Where(f => file.GetFileInfo(f).Length > 0)
+                .ToDictionary(f => GetWordLength(f, fileNameRegex), file.ReadAllLines);
 
             if (!this.wordFiles.Any() || this.wordFiles.Select(keyValuePair => keyValuePair.Value).All(words => !words.Any()))
             {

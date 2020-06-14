@@ -7,6 +7,10 @@ namespace EzPassword.Transformation
 
     public abstract class AddCharactersTransformation : ITransformation
     {
+        public abstract string Keyword { get; }
+
+        protected abstract Symbol GetSymbol();
+
         public Password Transform(Password password)
         {
             var firstPart = password.PasswordParts.FirstOrDefault();
@@ -29,7 +33,5 @@ namespace EzPassword.Transformation
 
             return new Password(partsWithSpaces);
         }
-
-        protected abstract Symbol GetSymbol();
     }
 }

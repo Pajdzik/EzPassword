@@ -6,6 +6,7 @@
     using CommandLine;
     using EzPassword.Core;
     using EzPassword.Core.Config;
+    using EzPassword.Transformation;
     using Kpax.Abstraction.System.IO;
 
     public class Program
@@ -16,25 +17,21 @@
             await parserResult.MapResult(
                 options =>
                 {
-                    var adjectiveGenerator = new TextFileWordGenerator(
-                        new DirectoryFacade(),
-                        new FileFacade(),
+                    var transformer = TransformerFactory.CreateFromKeywords(options.Transformations);
+
+                    var generator = PasswordGeneratorFactory.Create(
                         Path.Join(options.WordsDirectory, WordDirectoryConfig.AdjectiveDirectoryName),
-                        WordDirectoryConfig.AdjectiveFileNameRegex);
-
-                    var nounGenerator = new TextFileWordGenerator(
-                        new DirectoryFacade(),
-                        new FileFacade(),
                         Path.Join(options.WordsDirectory, WordDirectoryConfig.NounDirectoryName),
-                        WordDirectoryConfig.NounFileNameRegex);
-
-                    var generator = new PasswordGenerator(adjectiveGenerator, nounGenerator);
+                        WordDirectoryConfig.AdjectiveFileNameRegex,
+                        WordDirectoryConfig.NounFileNameRegex
+                    );
 
                     int numberOfGeneratedPasswords = options.PasswordCount;
                     while (numberOfGeneratedPasswords-- > 0)
                     { 
                         var password = generator.Generate(options.PasswordLength);
-                        Console.WriteLine(password);
+                        var transformedPassword = transformer.Transform(password);
+                        Console.WriteLine(transformedPassword + " (Original: \"" + password + "\")");
                     }
 
                     return Task.CompletedTask;

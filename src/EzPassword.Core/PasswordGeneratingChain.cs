@@ -19,7 +19,8 @@
             IEnumerable<string> words = this.GenerateParts();
             IEnumerable<Word> parts = words
                 .Select(word => word.ToArray())
-                .Select(characters => new Word(characters));
+                .Select(characters => new Word(characters))
+                .ToList();
 
             return new Password(parts);
         }

@@ -5,6 +5,8 @@ namespace EzPassword.Transformation
 
     public class CamelCaseTransformation : ChangeCaseTransformation
     {
+        public override string Keyword { get; } = "camel";
+        
         protected override PasswordPart ChangeCase(Word word)
         {
             word.Content[0] = Char.ToUpperInvariant(word.Content[0]);

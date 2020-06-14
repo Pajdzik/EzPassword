@@ -5,6 +5,8 @@ namespace EzPassword.Transformation
 
     public class Transformer : ITransformation
     {
+        public string Keyword { get; } = "transformer";
+
         private ICollection<ITransformation> transformations;
 
         public Transformer(ICollection<ITransformation> transformations)
@@ -14,12 +16,14 @@ namespace EzPassword.Transformation
 
         public Password Transform(Password password)
         {
+            Password transformedPassport = new Password(password);
+
             foreach (ITransformation transformation in this.transformations)
             {
-                password = transformation.Transform(password);
+                transformedPassport = transformation.Transform(transformedPassport);
             }
 
-            return password;
+            return transformedPassport;
         }
     }
 }

@@ -7,6 +7,8 @@ namespace EzPassword.Transformation
 
     public abstract class ChangeCaseTransformation : ITransformation
     {
+        public abstract string Keyword { get; }
+
         public Password Transform(Password password)
         {
             IEnumerable<PasswordPart> parts =
