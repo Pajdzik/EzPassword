@@ -30,6 +30,7 @@
 
             this.wordFiles = files
                 .Where(f => file.IsFile(f))
+                .Where(f => file.GetFileInfo(f).Length > 0)
                 .ToDictionary(f => GetWordLength(f, fileNameRegex), file.ReadAllLines);
 
             if (!this.wordFiles.Any() || this.wordFiles.Select(keyValuePair => keyValuePair.Value).All(words => !words.Any()))
