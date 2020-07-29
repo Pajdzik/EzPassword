@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/EzPassword.ConsoleGenerator/bin/Debug/netcoreapp3.1/EzPassword.ConsoleGenerator.dll",
-            "args": ["--lang", "pl"],
+            "args": ["--lang", "polish"],
             "cwd": "${workspaceFolder}/EzPassword.ConsoleGenerator",
             "console": "internalConsole",
             "stopAtEntry": false
