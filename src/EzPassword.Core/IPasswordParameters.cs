@@ -4,7 +4,7 @@
 
     public interface IPasswordParameters
     {
-        string Language { get; }
+        Language.Name Language { get; }
 
         int PasswordCount { get; }
 

@@ -2,7 +2,7 @@ namespace EzPassword.Core
 {
     using Kpax.Abstraction.System.IO;
 
-    public class PasswordGeneratorFactory
+    public sealed class PasswordGeneratorFactory
     {
         public static PasswordGenerator Create(
             string adjectiveDirectoryPath,

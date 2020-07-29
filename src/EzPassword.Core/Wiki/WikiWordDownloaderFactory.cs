@@ -20,7 +20,7 @@
             return observable;
         }
 
-        public static (IObservable<WikiPage>, IObservable<WikiPage>) CreateLanguageDownloaders(WikiSite site, Language language)
+        public static (IObservable<WikiPage> AdjectiveDownloader, IObservable<WikiPage> NounDownloader) CreateLanguageDownloaders(WikiSite site, WikiLanguage language)
         {
             var adjectiveDownloader = CreateCategoryDownloader(site, language.AdjectiveCategoryTitle);
             var nounDownloader = CreateCategoryDownloader(site, language.NounCategoryTitle);

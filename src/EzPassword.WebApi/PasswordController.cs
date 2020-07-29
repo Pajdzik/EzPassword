@@ -28,9 +28,10 @@
         {
             this.logger.LogInformation($"Incoming request with parameters: {parameters}");
 
+            string languageSymbol = Language.Get(parameters.Language);
             PasswordGenerator generator = PasswordGeneratorFactory.Create(
-                Path.Combine(this.wordsDirectory, parameters.Language, "adjectives"),
-                Path.Combine(this.wordsDirectory, parameters.Language, "nouns"),
+                Path.Combine(this.wordsDirectory, languageSymbol, "adjectives"),
+                Path.Combine(this.wordsDirectory, languageSymbol, "nouns"),
                 "adjectives_(\\d+).txt",
                 "nouns_(\\d+).txt");
 
