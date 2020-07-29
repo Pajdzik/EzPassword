@@ -5,7 +5,7 @@ namespace EzPassword.WebApi
     
     public class PasswordParameters : IPasswordParameters
     {
-        public string Language { get; set; } = "en";
+        public Language.Name Language { get; set; } = Core.Language.Name.English;
 
         public int PasswordCount { get; set; } = 1;
 

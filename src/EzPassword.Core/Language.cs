@@ -2,29 +2,29 @@ namespace EzPassword.Core
 {
     using Kpax.Core.Collections;
 
-    public enum Language
+    public static class Language
     {
-        Unknown,
-        English,
-        Polish,
-    }
-
-    public static class LanguageSymbol
-    {
-        private static TwoWayDictionary<Language, string> mapping = new TwoWayDictionary<Language, string>()
+        private static TwoWayDictionary<Name, string> mapping = new TwoWayDictionary<Name, string>()
         {
-            { Language.English, "en" },
-            { Language.Polish, "pl" },
+            { Name.English, "en" },
+            { Name.Polish, "pl" },
         };
 
-        public static string Get(Language language)
+        public static string Get(Name language)
         {
             return mapping[language];
         }
 
-        public static Language Get(string language)
+        public static Name Get(string language)
         {
             return mapping[language];
+        }
+
+        public enum Name
+        {
+            Unknown,
+            English,
+            Polish,
         }
     }
 }

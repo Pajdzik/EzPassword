@@ -23,8 +23,8 @@
             await parserResult.MapResult(
                 async options =>
                 {
-                    IDictionary<string, Language> wikiConfig = ReadWikiConfig();
-                    Language language = wikiConfig[options.LanguageSymbol!];
+                    IDictionary<string, WikiLanguage> wikiConfig = ReadWikiConfig();
+                    WikiLanguage language = wikiConfig[options.LanguageSymbol!];
                     string outDirectory = Path.Join(options.OutDirectory, language.Symbol);
                     await RunTasks(language, outDirectory).ConfigureAwait(true);
                 },
@@ -32,7 +32,7 @@
                 .ConfigureAwait(true);
         }
 
-        private static async Task RunTasks(Language language, string outDirectory)
+        private static async Task RunTasks(WikiLanguage language, string outDirectory)
         {
             using var client = new WikiClient
             {
@@ -58,11 +58,11 @@
                 .ConfigureAwait(true);
         }
 
-        private static IDictionary<string, Language> ReadWikiConfig()
+        private static IDictionary<string, WikiLanguage> ReadWikiConfig()
         {
             const string WikiConfigFileName = "WikiConfig.json";
             var wikiConfig = File.ReadAllText(WikiConfigFileName);
-            var languages = JsonConvert.DeserializeObject<List<Language>>(wikiConfig);
+            var languages = JsonConvert.DeserializeObject<List<WikiLanguage>>(wikiConfig);
             return languages.ToDictionary(lang => lang.Symbol, lang => lang);
         }
     }

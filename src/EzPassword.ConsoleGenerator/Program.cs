@@ -2,12 +2,12 @@
 {
     using System;
     using System.IO;
+    using System.Reflection;
     using System.Threading.Tasks;
     using CommandLine;
     using EzPassword.Core;
     using EzPassword.Core.Config;
     using EzPassword.Transformation;
-    using Kpax.Abstraction.System.IO;
 
     public class Program
     {
@@ -18,6 +18,12 @@
                 options =>
                 {
                     var transformer = TransformerFactory.CreateFromKeywords(options.Transformations);
+
+                    if (string.IsNullOrEmpty(options.WordsDirectory))
+                    {
+                        string? dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                        options.WordsDirectory = Path.Combine(dllPath ?? "", "content");
+                    }
 
                     var generator = PasswordGeneratorFactory.Create(
                         Path.Join(options.WordsDirectory, WordDirectoryConfig.AdjectiveDirectoryName),

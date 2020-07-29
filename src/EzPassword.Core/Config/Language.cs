@@ -2,9 +2,9 @@
 {
     using System;
 
-    public class Language
+    public class WikiLanguage
     {
-        public Language(string symbol, Uri wikiApi, string adjectiveCategoryTitle, string nounCategoryTitle)
+        public WikiLanguage(string symbol, Uri wikiApi, string adjectiveCategoryTitle, string nounCategoryTitle)
         {
             this.Symbol = symbol;
             this.WikiApi = wikiApi;
@@ -22,12 +22,12 @@
 
         public override bool Equals(object? obj)
         {
-            if (obj == null || !(obj is Language))
+            if (obj == null || !(obj is WikiLanguage))
             {
                 return false;
             }
 
-            var otherLanguage = (Language)obj;
+            var otherLanguage = (WikiLanguage)obj;
 
             return this.Symbol.Equals(otherLanguage.Symbol, StringComparison.InvariantCultureIgnoreCase)
                 && this.WikiApi.Equals(otherLanguage.WikiApi)
