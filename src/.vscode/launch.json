@@ -4,33 +4,47 @@
    // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
    "version": "0.2.0",
    "configurations": [
-        {
-            "name": "Launch ConsoleGenerator",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/EzPassword.ConsoleGenerator/bin/Debug/netcoreapp3.1/EzPassword.ConsoleGenerator.dll",
-            "args": ["--lang", "polish"],
-            "cwd": "${workspaceFolder}/EzPassword.ConsoleGenerator",
-            "console": "internalConsole",
-            "stopAtEntry": false
-        },
-        {
-            "name": "Launch WordDownloader",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/EzPassword.WordDownloader/bin/Debug/netcoreapp3.1/EzPassword.WordDownloader.dll",
-            "args": ["-l", "pl", "-o", "/Users/pajdziu/Repos/temp/wiki"],
-            "cwd": "${workspaceFolder}/EzPassword.WordDownloader",
-            "console": "internalConsole",
-            "stopAtEntry": false
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
-        }
-    ]
+    {
+        "name": "Launch ConsoleGenerator",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/EzPassword.ConsoleGenerator/bin/Debug/netcoreapp3.1/EzPassword.ConsoleGenerator.dll",
+        "args": [
+            "--lang",
+            "polish"
+        ],
+        "cwd": "${workspaceFolder}/EzPassword.ConsoleGenerator",
+        "console": "internalConsole",
+        "stopAtEntry": false
+    },
+    {
+        "name": "Launch WordDownloader",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/EzPassword.WordDownloader/bin/Debug/netcoreapp3.1/EzPassword.WordDownloader.dll",
+        "args": [
+            "-l",
+            "pl",
+            "-o",
+            "/Users/pajdziu/Repos/temp/wiki"
+        ],
+        "cwd": "${workspaceFolder}/EzPassword.WordDownloader",
+        "console": "internalConsole",
+        "stopAtEntry": false
+    },
+    {
+        "name": ".NET Core Attach",
+        "type": "coreclr",
+        "request": "attach",
+        "processId": "${command:pickProcess}"
+    },
+    {
+        "name": "Attach to .NET Functions",
+        "type": "coreclr",
+        "request": "attach",
+        "processId": "${command:azureFunctions.pickProcess}"
+    }
+]
 }
