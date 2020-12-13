@@ -299,3 +299,5 @@ __pycache__/
 src/coverage.json
 
 src/coverage.opencover.xml
+
+src/EzPassword.Website/.eslintcache
