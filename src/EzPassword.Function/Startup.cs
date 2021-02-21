@@ -15,8 +15,8 @@ namespace EzPassword.Function
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            string? dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string wordsDirectory = Path.Combine(dllPath ?? "", "content", "pl");
+            string dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
+            string wordsDirectory = Path.Combine(dllPath, "..", "content", "pl");
 
             var passwordGenerator = PasswordGeneratorFactory.Create(
                     Path.Join(wordsDirectory, "adjectives"),
