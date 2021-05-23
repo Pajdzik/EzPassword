@@ -24,8 +24,8 @@ namespace EzPassword.Function
                     WordDirectoryConfig.AdjectiveFileNameRegex,
                     WordDirectoryConfig.NounFileNameRegex
                 );
-            var serviceDescriptor = new ServiceDescriptor(typeof(PasswordGenerator), passwordGenerator);
-            builder.Services.Add(serviceDescriptor);
+
+            builder.Services.AddSingleton<PasswordGenerator>((_) => passwordGenerator);
         }
     }
 }
