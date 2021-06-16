@@ -1,15 +1,22 @@
 namespace EzPassword.Function
 {
-    using System.Collections.Generic;
     using System.Net;
+    using EzPassword.Core;
     using Microsoft.Azure.Functions.Worker;
     using Microsoft.Azure.Functions.Worker.Http;
     using Microsoft.Extensions.Logging;
     
-    public static class HttpExample
+    public class HttpExample
     {
+        private readonly PasswordGenerator passwordGenerator;
+
+        public HttpExample(PasswordGenerator passwordGenerator)
+        {
+            this.passwordGenerator = passwordGenerator;
+        }
+
         [Function("EzPassword")]
-        public static HttpResponseData Run(
+        public HttpResponseData Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")]
             HttpRequestData req,
             FunctionContext executionContext)
@@ -20,7 +27,8 @@ namespace EzPassword.Function
             var response = req.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
 
-            response.WriteString("Welcome to Azure Functions!");
+            Password password = passwordGenerator.Generate(20);
+            response.WriteString(password.ToString());
 
             return response;
         }
