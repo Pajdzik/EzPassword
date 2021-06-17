@@ -1,0 +1,9 @@
+- name: Azure Functions Action
+  uses: Azure/functions-action@v1.4.0
+  with:
+    # Name of the Azure Function App
+    app-name: EzPasswordFunction
+    # Path to package or folder. *.zip or a folder to deploy
+    package: src/EzPassword.Function
+    # Function app slot to be deploy to
+    slot-name: ezpasswordfunction
