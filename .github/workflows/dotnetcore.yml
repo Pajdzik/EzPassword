@@ -13,6 +13,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.100-preview.4.21255.9
+    - name: Setup .NET Core for Azure Function worker
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
     - name: Build with dotnet
       run: dotnet build src --configuration Release
     - name: Test
