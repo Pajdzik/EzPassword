@@ -28,7 +28,7 @@ namespace EzPassword.Function
             response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
 
             Password password = passwordGenerator.Generate(20);
-            response.WriteString(password.ToString());
+            response.WriteString("PASSWORD: " + password.ToString());
 
             return response;
         }
