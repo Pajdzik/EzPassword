@@ -5,11 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId":"${command:pickProcess}"
+        },
+        {
             "name": "Azure Function",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/<target-framework>/<project-name.dll>",
+            "program": "${workspaceFolder}/src/EzPassword.Function/bin/Debug/net6.0/EzPassword.Function.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/EzPassword.Function",
             "stopAtEntry": false,
