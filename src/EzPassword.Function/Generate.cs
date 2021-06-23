@@ -5,7 +5,9 @@ namespace EzPassword.Function
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Net.Http;
     using System.Text.Json;
+    using System.Text.Json.Serialization;
     using System.Threading.Tasks;
     using EzPassword.Core;
     using EzPassword.Transformation;
@@ -43,7 +45,12 @@ namespace EzPassword.Function
 
         private async Task<RestPasswordParameters> ParseParameters(HttpRequestData request)
         {
-            string requestBody = string.Empty;
+            if (request.Method == HttpMethod.Get.Method)
+            {
+                return new RestPasswordParameters();
+            }
+
+            string requestBody;
             using (StreamReader streamReader = new StreamReader(request.Body))
             {
                 requestBody = await streamReader.ReadToEndAsync();
@@ -51,7 +58,10 @@ namespace EzPassword.Function
 
             var options = new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true
+                AllowTrailingCommas = true,
+                NumberHandling = JsonNumberHandling.AllowReadingFromString,
+                PropertyNameCaseInsensitive = true,
+                WriteIndented = true
             };
 
             var parameters = JsonSerializer.Deserialize<RestPasswordParameters>(requestBody, options);
