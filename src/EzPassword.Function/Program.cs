@@ -12,23 +12,31 @@ namespace EzPassword.Function
     {
         public static void Main()
         {
-            PasswordGenerator generator = Program.CreatePasswordGenerator();
+            MultiLangPasswordGenerator generator = CreateMultiLangPasswordGenerator();
             var host = new HostBuilder()
                 .ConfigureFunctionsWorkerDefaults()
                 .ConfigureServices(serviceCollection =>
                 {
-                    serviceCollection.AddSingleton<PasswordGenerator>(_ => generator);
+                    serviceCollection.AddSingleton<MultiLangPasswordGenerator>(_ => generator);
                 }).Build();
 
             host.Run();
         }
 
-        private static PasswordGenerator CreatePasswordGenerator()
+        private static MultiLangPasswordGenerator CreateMultiLangPasswordGenerator()
+        {
+            PasswordGenerator englishGenerator = CreatePasswordGenerator(Language.Name.English);
+            PasswordGenerator polishGenerator = CreatePasswordGenerator(Language.Name.Polish);
+            
+            return new MultiLangPasswordGenerator(new [] { (Language.Name.English, englishGenerator), (Language.Name.Polish, polishGenerator) });
+        }
+
+        private static PasswordGenerator CreatePasswordGenerator(Language.Name lang)
         {
             string dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
             Console.WriteLine(dllPath);
 
-            string wordsDirectory = Path.Combine(dllPath, "content", "pl");
+            string wordsDirectory = Path.Combine(dllPath, "content", Language.Get(lang));
             Console.WriteLine(wordsDirectory);
 
             return PasswordGeneratorFactory.Create(

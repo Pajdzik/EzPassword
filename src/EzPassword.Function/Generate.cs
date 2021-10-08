@@ -17,9 +17,9 @@ namespace EzPassword.Function
 
     public class Generate
     {
-        private readonly PasswordGenerator passwordGenerator;
+        private readonly MultiLangPasswordGenerator passwordGenerator;
 
-        public Generate(PasswordGenerator passwordGenerator)
+        public Generate(MultiLangPasswordGenerator passwordGenerator)
         {
             this.passwordGenerator = passwordGenerator;
         }
@@ -76,7 +76,7 @@ namespace EzPassword.Function
 
             for (int i = 0; i < parameters.PasswordCount; i++)
             {
-                Password password = passwordGenerator.Generate(parameters.PasswordLength);
+                Password password = passwordGenerator.Generate(parameters.Language, parameters.PasswordLength);
                 Password transformedPassword = transformer.Transform(password);
                 passwords.Add(transformedPassword);
             }
