@@ -7,6 +7,7 @@ namespace EzPassword.Function
 
     internal class RestPasswordParameters : IPasswordParameters
     {
+        [JsonPropertyName("lang")]
         public Language.Name Language { get; set; } = Core.Language.Name.English;
 
         [JsonPropertyName("count")]
@@ -15,6 +16,7 @@ namespace EzPassword.Function
         [JsonPropertyName("length")]
         public int PasswordLength { get; set; } = 20;
 
+        [JsonPropertyName("transformations")]
         public IEnumerable<string> Transformations { get; set; } = Enumerable.Empty<string>();
 
         public bool JsonOutput { get; set; } = false;
